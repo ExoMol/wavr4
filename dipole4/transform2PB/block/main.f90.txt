@@ -1,0 +1,61 @@
+
+      idx2size_max_sym = 0
+      idx2size_max_asy = 0
+      do ic=1,nn(2); do ib=1,nn(1)
+        if(idx2size_max_sym < idx2sym(ib,ic)%size) idx2size_max_sym = idx2sym(ib,ic)%size
+        if(idx2size_max_asy < idx2asy(ib,ic)%size) idx2size_max_asy = idx2asy(ib,ic)%size
+      enddo; enddo
+      allocate(mtmp_sym(na,idx2size_max_sym),h6sym(idx2size_max_sym,nss),pbasis_sym(na,nss))
+      allocate(mtmp_asy(na,idx2size_max_asy),h6asy(idx2size_max_asy,nsa),pbasis_asy(na,nsa))
+
+
+        ! matrix of stage 2 vectors - sym case
+        if(ib /= ic) then
+          h5 => vectrs2(ib,ic)%mat(:,:)
+        else
+          allocate(h5(idx1size_max,idx2size_max))
+          ik=0
+          do im=1,idx2(ib,ic)%size
+            if(s2sym(ib,kr,im)) then
+              ik=ik+1
+              h5(1:idx1(ib,ic,id)%size,ik) = vectrs2(ib,ic)%mat(1:idx1(ib,ic,id)%size,im)
+            else if
+          enddo          
+        else if
+
+
+!     do id =1,nn(3)
+!       do ic =1,nn(2)
+!         do ib =1,nn(1)
+!           write(u10) vector(:,ib,ic,id)
+!         end do
+!       end do
+!     end do
+
+!     tmp = zero
+!     do id =1,nn(3)
+!       do ic =1,nn(2)
+!         do ib =1,nn(1)
+!           do n=1,na
+!             tmp= tmp+ vector(n,ib,ic,id)*vector(n,ib,ic,id)
+!           end do
+!         end do
+!       end do
+!     end do
+      
+!     write(6,'(2x,i4,f24.6,f24.16)') ii,energy-zpe, tmp
+!     write(10) ii,energy-zpe
+      
+
+!      deallocate(h3)
+!      nullify(h5)
+!      deallocate(v3n)
+
+
+!        h3 x (h5 x h6)
+!
+!        mtmp(1:idx1(ib,ic,id)%size,1:nstates) = &
+!      &   matmul(h5(1:idx1(ib,ic,id)%size,1:idx2(ib,ic)%size),h6(1:idx2(ib,ic)%size,1:nstates))
+!
+!        pbasis(1:na,1:nstates) = &
+!      &   matmul(h3(1:na,1:idx1(ib,ic,id)%size),mtmp(1:idx1(ib,ic,id)%size,1:nstates))

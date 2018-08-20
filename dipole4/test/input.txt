@@ -1,0 +1,30 @@
+ TITLE:  HCCH in orth-sat vectors; potent: Shengi & Bowman CPL 368 p421 (2003)
+!  m1             m2             m3             m4                    <-- masses
+    1.007825032    1.007825032   12.0           12.0
+! Coordinate system:              <-- 1 Jacobi; 2 Radau; 3 DDiatom; 4 Orthog-Sat
+   4
+! type re/eta     we         De        gridsize      <-- radial basis/quadrature
+   1   1.71      3000.      40000.        3
+   1   1.71      3000.      40000.        3
+   1   1.225     2200.      60000.        3
+! angular_problem_only_flag  optimize_flag  test_flag  expansion_flag
+           0                       3             2             0
+!  jmax lmax kmax Jmax Kmax j_par l_par j+l_par           <-- angular basis size
+     3    3    3    0    0    0    0    1
+!    j    l    k                  <-- angular potential expansn size (if needed)
+    42   42   22
+!  nt1  nt  nphi iauto (1 - on)   <-- angular quadrature size (autoslct: on/off)
+    33   33   17    1
+! enzero                          <-- zero energy is used only when not computed
+  0.0
+!   encut0  ! encut1    encut2    encut3     encut4      <-- Ecut#/icut#/margin#
+      999        0          0        20         10
+      999.   30000.     30000.    15000.     30000.
+      999.   30000.     30000.    30000.     30000.
+      999      300        400       999        999
+!  r1(1)    r2(2)    R(3)    theta1(4) theta(5) phi(6)      <-- reference config
+   1.6625   1.6625   1.203   3.141593  0.0       0.0
+!  stage_flag         <-- used to read in saved eigenvectors from previous stage
+    0
+!  oner_flag                      <-- 1/R^2 treatment: 0 - DVR approx, 1 - exact
+    0

@@ -1,0 +1,5 @@
+18/06/2008
+
+h5 pointer corrected for HHSYM=FALSE
+
+still outstanding - do the same fix for HHSYM=TRUE

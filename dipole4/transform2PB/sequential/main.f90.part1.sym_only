@@ -1,0 +1,586 @@
+! wave function analysis: part I convert to primitive basis
+! NOTE: this is for K=0 only!!
+! ASSUMED jmax >= lmax
+
+PROGRAM wfanalysis
+  USE types
+  USE param
+  USE base_lib
+  USE angles
+  USE workarrays
+IMPLICIT NONE
+
+REAL(DP), POINTER :: vec1(:),vec2(:),vec(:)
+REAL(DP), ALLOCATABLE :: vector3(:),vecnorm(:)
+REAL(DP), ALLOCATABLE, TARGET :: vector(:,:,:,:)
+
+INTEGER(I4B) :: istage1,istage2,istage3
+INTEGER(I4B) :: ist1_max,ist2_max
+!
+INTEGER(I4B) :: n, ii,ni,i1,i2,i3
+INTEGER(I4B) :: ia,ib,ic,id,im, m, ia1
+INTEGER(I4B) :: i, icounter, idiag, nsize, icut, istart
+INTEGER(I4B) :: j, l, k, kr ! m, kp
+INTEGER(I4B) :: j1, l1, k1  ! m1, kp1
+INTEGER(I4B) :: nlev,nnmax,istage2s,istage2a,itmp
+! INTEGER(I4B) :: j2min,j2max,l2min,l2max,j2sb,l2sb
+! INTEGER(I4B) :: p2,k2,xk1,xk
+!
+!  parameters
+!
+INTEGER(I4B) :: nstates     ! number of lowest states to be used
+INTEGER(I4B) :: nmax        ! number of quadrature points
+!
+!TYPE(triple), ALLOCATABLE :: idx1(:,:,:),idx2(:)
+!REAL(DP), ALLOCATABLE, TARGET :: h3(:,:)
+REAL(DP), POINTER :: h3(:,:),h5(:,:)
+REAL(DP), ALLOCATABLE :: e3(:), plk(:,:,:)
+!REAL(DP), ALLOCATABLE :: probgrid(:,:)
+REAL(DP) :: zpe, tmp,temp,tmp1,temp1, energy, x, step
+REAL(DP) :: one_over_sqrt2, ecut
+
+INTEGER(I4B) :: u11=11,u12=12,u13=13
+INTEGER(I4B) :: n1,n2, ng,ng2
+
+CHARACTER(9) :: fname
+!fname= 'x0000-K0-'
+
+one_over_sqrt2 = one/sqrt(two)
+
+!! define grid size (full and half)    <- not needed!
+!!ng = 20;  ng2=ng/2
+!!step = one/ng*2
+! set the window for final eigenstates from state # istart to # icut or Energy ecut (relative to zero energy) 
+istart = 0; icut =  10; ecut = 10000.D0
+
+open(5,file='inp.txt',status='old')
+open(6,file='out.txt')
+! open(7,file='out-wf.txt')
+
+! ====================================================================
+! INPUT (part1)
+
+jrmax=0;  krmax=0
+
+read(5,*)
+read(5,*) nn(1), nn(2), nn(3)
+read(5,*)
+read(5,*) j_parity_max, l_parity_max, jl_parity_max
+read(5,*)
+read(5,*) zpe
+read(5,*)
+read(5,*) jmax, lmax, kmax
+! ====================================================================
+! get namax & mmax
+! WARNING: INADVERTEDLY it returns j_parity, l_parity, jl_parity
+call angular_states_max()
+! ====================================================================
+! INPUT (part2)
+
+read(5,*)
+read(5,*) jp, j_parity, l_parity, jl_parity
+read(5,*)
+read(5,*) fname
+
+! ====================================================================
+! PRINT INPUT
+
+write(u6,'(1x,3i5)') nn(1), nn(2), nn(3)
+write(u6,'(1x,8i5)') j_parity_max, l_parity_max, jl_parity_max
+write(u6,'(" ZPE=",f20.8)') zpe
+write(u6,'(1x,3i5)') jmax,lmax,kmax
+write(u6,'(1x,4i5)') jp, j_parity, l_parity, jl_parity
+write(6,*) ' file=', fname
+
+! ====================================================================
+
+! define missing quantum numbers
+jr=0; kr=0; p=jp-jr
+test_flag = 2
+
+allocate(indx(namax,6),krn(0:krmax))
+
+allocate(idx1(nn(1),nn(2),nn(3)),idx2(nn(1),nn(2)))
+allocate(vectrs1(nn(1),nn(2),nn(3)),vectrs2(nn(1),nn(2)))
+
+if(HHSYM) allocate(idx2sym(nn(1),nn(2)),idx2asy(nn(1),nn(2)))
+
+allocate(angsym(0:krmax,namax))
+if(HHSYM) then
+  allocate( s1sym(nn(1),nn(3),0:krmax,namax), &
+            s2sym(nn(1),0:krmax,nn(3)*namax))
+end if
+
+call angular_states_qnumbers(indx,krn)
+na = krn(kr)%size
+
+! allocate an auxiliary vector to test vector norm
+allocate(vecnorm(na))
+allocate(vector(na,nn(1),nn(2),nn(3)))
+
+! ===================================================================
+
+open(10,file='xdata.dat', &
+  access='SEQUENTIAL',form='UNFORMATTED',iostat=idiag)
+
+open(u11,file=fname//'1.dat', &
+  status='OLD',access='SEQUENTIAL',form='UNFORMATTED',iostat=idiag)
+if(idiag /=0) then 
+  write(6,*) '  cant open ',fname//'1.dat';  stop
+end if
+
+open(u12,file=fname//'2.dat', &
+  status='OLD',access='SEQUENTIAL',form='UNFORMATTED',iostat=idiag)
+if(idiag /=0) then
+  write(6,*) '  cant open ',fname//'2.dat';  stop
+end if
+
+open(u13,file=fname//'3.dat', &
+  status='OLD',access='SEQUENTIAL',form='UNFORMATTED',iostat=idiag)
+if(idiag /=0) then
+  write(6,*) '  cant open ',fname//'3.dat'; stop
+end if
+
+! ====================================================================
+! stage 1
+
+      write(u6,'("  reading in stage 1 eigenvectors...")')
+
+      read(u11) istage1, ist1_max
+      write(6,*) ' istage1=', istage1
+
+      read(u11) idx1
+
+      !do i2=1,nn(2); do i1=1,nn(1); do i3=1,nn(3)
+      !      write(u6,'(3i3,3i12)') i1,i2,i3, &
+      !        idx1(i1,i2,i3)%size,idx1(i1,i2,i3)%start,idx1(i1,i2,i3)%end
+      !end do; end do; end do
+
+      ! retain only the eigenvectors conforming  Ecut1
+      allocate(e3(na))
+
+      do i3=1,nn(3); do i2=1,nn(2); do i1=1,nn(1)
+
+            if(idx1(i1,i2,i3)%size < 1) cycle
+            if(HHSYM .and. i1 > i2) cycle 
+
+            read(u11) e3(1:idx1(i1,i2,i3)%size)
+
+            allocate(vectrs1(i1,i2,i3)%mat(1:na,1:idx1(i1,i2,i3)%size))
+
+            do ia=1,idx1(i1,i2,i3)%size
+              read(u11) vectrs1(i1,i2,i3)%mat(:,ia)
+            end do
+
+      end do; end do; end do
+
+      close(u11)
+
+      deallocate(e3)
+
+      !  update stage 1 indices, count the total number of stage1 vectors and
+      !  find max number of selected levels per grid
+      !  this also takes care of H-H symmetry if present
+
+      call setup_idx1(kr,istage1,ist1_max)
+
+! ===================================================================
+! stage 2
+
+      write(u6,'("  reading in stage 2 eigenvectors...")')
+
+      read(u12) istage2,ist2_max
+      write(6,*) ' istage2=', istage2
+
+      read(u12) idx2
+
+      ! retain only the eigenvectors conforming  Ecut2
+      do ic =1,nn(2); do ib =1,nn(1)
+
+          if(idx2(ib,ic)%size < 1) cycle
+          if(HHSYM .and. ib > ic) cycle 
+
+          !  length of stage 2 eigenvectors at (ib,ic) grid
+          nnmax = idx1(ib,ic,nn(3))%end
+          if(nnmax < 1) cycle
+
+          !  number of stage 2 eigenvectors at (ib,ic) grid
+          allocate(e3(1:idx2(ib,ic)%size))
+          read(u12) e3(1:idx2(ib,ic)%size)
+          deallocate(e3)
+
+          allocate(vectrs2(ib,ic)%mat(1:nnmax,1:idx2(ib,ic)%size))
+
+          do n=1,idx2(ib,ic)%size
+            read(u12) vectrs2(ib,ic)%mat(:,n)
+          end do
+
+      end do; end do
+
+      rewind(u12)
+
+      !  update stage 2 indices, count the total number of stage2 vectors and
+      !  find max number of selected levels per grid
+      !  this also takes care of H-H symmetry if present
+
+      call setup_idx2(kr,istage2,ist2_max)
+
+! ===================================================================
+! stage 3
+
+write(6,'(" reading stage 3...")')
+
+    istage2 = idx2(nn(1),nn(2))%end
+    istage2s = idx2sym(nn(1),nn(2))%end
+    istage2a = idx2asy(nn(1),nn(2))%end
+
+! symmetric part
+
+write(u6,*) ' istage2s=', istage2s
+
+! allocate a vector
+allocate(vector3(istage2s))
+! allocate(e3(na))
+
+read(u13) nstates,itmp
+
+! ===================================================================
+
+write(u6,*) ' _________________________________________________________'
+write(u6,*) '  index             energy            norm                '
+
+!   HHSYM is explicitely .TRUE.
+
+do ii=1,nstates
+
+  read(u13) energy,vector3
+
+  if(ii < istart) cycle
+  if(energy-zpe > ecut) cycle
+  if(ii > icut) cycle
+
+  vector(:,:,:,:) = zero
+
+  !$OMP PARALLEL DEFAULT(SHARED) &
+  !$OMP& PRIVATE(i,ia,ib,ic,id,h3,h5,vec,im,m,n,ni,tmp)
+!  !$OMP& PRIVATE(vec1,vec2)
+
+  !$OMP DO SCHEDULE(DYNAMIC)
+
+  ! do id=1,nn(3); do ic=1,nn(2); do ib=1,nn(1)
+  !  replace the nested loops above by one loop
+  do i=1,nn(3)*nn(2)*nn(1)
+
+    !  unroll true indices
+    id = int(int((i-1)/nn(1))/nn(2))+1
+    ic = int((i-1)/nn(1))-nn(2)*(id-1)+1
+    ib = i-nn(1)*(ic-1)-nn(1)*nn(2)*(id-1)
+
+    vec => vector(:,ib,ic,id)
+   
+    if(ib > ic) then
+      allocate(h3(na,idx1(ib,ic,id)%size))
+      do ia =1,idx1(ib,ic,id)%size
+        do ni=1,na
+          h3(ni,ia) =  vectrs1(ic,ib,id)%mat(angsym(0,ni),ia)
+        end do
+      end do
+      h5 => vectrs2(ic,ib)%mat(:,:)
+    else
+      h3 => vectrs1(ib,ic,id)%mat(:,:)
+      h5 => vectrs2(ib,ic)%mat(:,:)
+    end if
+
+        !  convert eigenvector to the primitive basis
+
+        do im=1,idx2sym(ib,ic)%size
+
+          n = idx2sym(ib,ic)%start+im-1
+
+          do ia =1,idx1(ib,ic,id)%size
+
+            m = idx1(ib,ic,id)%start+ia-1
+
+            tmp = vector3(n)*h5(m,im)
+            if(ib /= ic)  tmp = tmp* one_over_sqrt2
+            vec(:) = vec(:) + tmp* h3(:,ia)
+
+          end do
+        end do
+
+    if(ib > ic) then
+      deallocate(h3)
+    else
+      nullify(h3)
+    end if
+
+  end do
+  ! end do; end do; end do
+  !$OMP END DO
+
+  !$OMP END PARALLEL
+
+!  vecnorm(:) = zero
+!        do ia=1,na
+!          vecnorm(ia) = vecnorm(ia)+ e3(ia)*e3(ia)
+!        end do
+!  tmp = zero
+!  do n=1,na
+!    tmp = tmp+vecnorm(n)
+!  end do
+!
+!  if(abs(one-tmp) > 0.0001) then
+!    write(6,'(2x,i4,f24.6,f10.6)') ii,energy-zpe,tmp
+!  end if
+
+  do id =1,nn(3)
+    do ic =1,nn(2)
+      do ib =1,nn(1)
+        write(10) vector(:,ib,ic,id)
+      end do
+    end do
+  end do
+
+  tmp = zero
+  do id =1,nn(3)
+    do ic =1,nn(2)
+      do ib =1,nn(1)
+        do n=1,na
+          tmp= tmp+ vector(n,ib,ic,id)*vector(n,ib,ic,id)
+        end do
+      end do
+    end do
+  end do
+
+!  write(6,'(2x,i4,f24.6)') ii,energy-zpe
+  write(6,'(2x,i4,f24.6,e10.2)') ii,energy-zpe, tmp
+  write(10) ii,energy-zpe
+
+end do
+
+if(HHSYM) deallocate(s1sym,s2sym)
+deallocate(angsym)
+
+! deallocate vectors
+deallocate(indx,krn)
+
+call time_stamp(6)
+
+END PROGRAM
+
+
+!%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+SUBROUTINE setup_idx1(kr,istage1,ist1_max)
+  USE types
+  USE param
+  USE workarrays, ONLY: idx1,s1sym,vectrs1,angsym
+IMPLICIT NONE
+INTEGER(I4B), INTENT(IN) :: kr
+INTEGER(I4B), INTENT(OUT) :: istage1,ist1_max
+INTEGER(I4B) :: n,i1,i2,i3,icounter,ia
+REAL(DP) :: temp
+
+    if(HHSYM) then
+      do i1=1,nn(1)
+        i2=i1
+          do i3=1,nn(3)
+            !  find out the symmetry of i1=i2 states
+            !  the algorithm works only if the eigenfuctions are
+            !  either symmetric or asymmetric
+            !
+              do ia=1,idx1(i1,i2,i3)%size
+                temp = zero; s1sym(i1,i3,kr,ia)= .TRUE.
+                do n=1,na
+                  temp = temp+ vectrs1(i1,i1,i3)%mat(n,ia)  &
+                              *vectrs1(i1,i1,i3)%mat(angsym(kr,n),ia)
+                end do
+                if(temp < zero) s1sym(i1,i3,kr,ia)= .FALSE.
+              end do
+          end do
+      end do
+    end if
+
+    ! -----------------------------------------------------------
+
+    ! given i1 and i2, find the running index start and end positions
+    ! as a function of i3 based on the length of selected
+    ! angular basis functions
+
+    write(u6,'(" ib ic id    red. basis   start indx  end indx")')
+
+      do i2=1,nn(2)
+        do i1=1,nn(1)
+          n=0
+
+          do i3=1,nn(3)
+            if(HHSYM .and. i1 > i2) idx1(i1,i2,i3)%size = idx1(i2,i1,i3)%size
+            if(idx1(i1,i2,i3)%size==0) then
+              idx1(i1,i2,i3)%start=n
+              idx1(i1,i2,i3)%end=n
+            else
+              idx1(i1,i2,i3)%start=n+1
+              n=n+idx1(i1,i2,i3)%size
+              idx1(i1,i2,i3)%end=n
+            end if
+
+            write(u6,'(3i3,3i12)') i1,i2,i3, &
+              idx1(i1,i2,i3)%size,idx1(i1,i2,i3)%start,idx1(i1,i2,i3)%end
+          end do
+        end do
+      end do
+
+      ! count the total number of stage1 vectors and
+      ! base vectors if additional symmetry is present
+      icounter = 0; n=0
+      do i2=1,nn(2); do i1=1,nn(1)
+        icounter = icounter+idx1(i1,i2,nn(3))%end
+        if(i1 <= i2)   n = n+idx1(i1,i2,nn(3))%end
+      end do; end do
+      istage1 = icounter
+      write(u6,'(" stage 1 total:",i8," records")') istage1
+        if(HHSYM) then
+        istage1 = n
+        write(u6,'(" of which basic",i8," records")') istage1
+      end if
+
+      !  find max number of selected levels per grid
+      ist1_max=0
+      do i3=1,nn(3); do i2=1,nn(2); do i1=1,nn(1)
+          ist1_max= max(ist1_max,idx1(i1,i2,i3)%size)
+      end do; end do; end do
+
+END SUBROUTINE
+
+!%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+SUBROUTINE setup_idx2(kr,istage2,ist2_max)
+  USE types
+  USE param
+  USE workarrays, ONLY: idx1,idx2,idx2sym,idx2asy,s1sym,s2sym,vectrs2
+IMPLICIT NONE
+INTEGER(I4B), INTENT(IN) :: kr
+INTEGER(I4B), INTENT(OUT) :: istage2,ist2_max
+INTEGER(I4B) :: n,n1,ib,ic,id,icounter, nsym,nasy, ij,ii
+REAL(DP) :: tmp0, tmp1
+
+      !  find out the symmetry of ib=ic states
+      !  the algorithm works only if the eigenfuctions are
+      !  either symmetric or asymmetric
+      !
+      if(HHSYM) then
+        do ib =1,nn(1)
+          ic=ib
+            do n1=1,idx2(ib,ic)%size
+              tmp0 = zero; tmp1 = zero; s2sym(ib,kr,n1)= .TRUE.
+              do id =1,nn(3)
+                do ii =1,idx1(ib,ic,id)%size
+                  n = idx1(ib,ic,id)%start+ii-1
+                  if(s1sym(ib,id,kr,ii))then
+                    tmp0 = tmp0+ vectrs2(ib,ib)%mat(n,n1)**2
+                  else
+                    tmp1 = tmp1+ vectrs2(ib,ib)%mat(n,n1)**2
+                  endif
+                end do
+              end do
+              if(tmp0 < tmp1) s2sym(ib,kr,n1)= .FALSE.
+            end do
+
+        end do
+      end if
+
+    ! -----------------------------------------------------------
+
+    write(u6,'(" ib ic  full basis  red. basis   start indx  end indx")')
+    n=0
+    do ic=1,nn(2)
+      do ib=1,nn(1)
+
+        if(HHSYM .and. ib > ic) idx2(ib,ic)%size = idx2(ic,ib)%size
+        if(idx2(ib,ic)%size==0) then
+           idx2(ib,ic)%start=n
+           idx2(ib,ic)%end=n
+        else
+           idx2(ib,ic)%start=n+1
+           n=n+idx2(ib,ic)%size
+           idx2(ib,ic)%end=n
+        end if
+
+        write(u6,'(2i3,4i12)') ib,ic, idx1(ib,ic,nn(3))%end, &
+          idx2(ib,ic)%size,idx2(ib,ic)%start,idx2(ib,ic)%end
+      end do
+    end do
+
+    ! ---------------------------------------------------
+    if(HHSYM) then
+      nsym = 0  !  count symmetric functions
+      nasy = 0  !  count asymmetric functions
+      do ic =1,nn(2)
+        do ib =1,ic
+          idx2sym(ib,ic)%size=0
+          idx2asy(ib,ic)%size=0
+          if(ib == ic) then
+            do ij=1,idx2(ic,ic)%size
+              if(s2sym(ic,kr,ij)) then
+                idx2sym(ic,ic)%size=idx2sym(ic,ic)%size+1
+              else
+                idx2asy(ic,ic)%size=idx2asy(ic,ic)%size+1
+              end if
+            end do
+          else  ! ib /= ic
+            idx2sym(ib,ic)%size= idx2(ib,ic)%size
+            idx2asy(ib,ic)%size= idx2(ib,ic)%size
+          end if
+
+          if(idx2sym(ib,ic)%size==0) then
+             idx2sym(ib,ic)%start=nsym
+             idx2sym(ib,ic)%end=nsym
+          else
+             idx2sym(ib,ic)%start=nsym+1
+             nsym=nsym+idx2sym(ib,ic)%size
+             idx2sym(ib,ic)%end=nsym
+          end if
+              
+          if(idx2asy(ib,ic)%size==0) then
+             idx2asy(ib,ic)%start=nasy
+             idx2asy(ib,ic)%end=nasy
+          else
+             idx2asy(ib,ic)%start=nasy+1
+             nasy=nasy+idx2asy(ib,ic)%size
+             idx2asy(ib,ic)%end=nasy
+          end if
+
+          if(ib /= ic) then
+            idx2sym(ic,ib) = idx2sym(ib,ic)
+            idx2asy(ic,ib) = idx2asy(ib,ic)
+          end if
+
+        end do
+      end do
+    end if
+    ! ---------------------------------------------------
+
+    ! the number of stage2 vectors
+    ! istage2 = icounter
+    istage2 = idx2(nn(1),nn(2))%end
+    write(u6,'(" stage 2 total:",i8," records")') istage2
+    if(HHSYM) then
+      icounter = 0
+      do ic=1,nn(2); do ib=1,nn(1)
+        if(ib > ic) cycle
+        icounter = icounter+idx2(ib,ic)%size
+      end do; end do
+      write(u6,'(" stage 2 basic:",i8," records")') icounter
+      write(u6,'("           sym:",i8)') idx2sym(nn(1),nn(2))%end
+      write(u6,'("           asy:",i8)') idx2asy(nn(1),nn(2))%end
+    end if
+
+    !  find max number of selected levels per grid
+    ist2_max=0
+    do ic=1,nn(2); do ib=1,nn(1)
+        ist2_max= max(ist2_max,idx2(ib,ic)%size)
+    end do; end do
+
+END SUBROUTINE
+
+!%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

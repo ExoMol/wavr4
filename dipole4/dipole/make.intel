@@ -1,0 +1,61 @@
+#
+#  make.inc:  common part of FORTRAN77/90/95 make file for DEC TRU64 UNIX
+#
+#  I. Kozin: 18/01/2008
+#  10/04/2002 - options added to choose release or debug options
+#               OPT_REL  or OPT_DEB
+
+#  f90 free form
+FC	 = ifort
+
+#  f90 fixed form
+FC1      = ifort -fixed
+
+#  f77 (fixed) form
+FC2      = ifort
+
+#  linker
+LNK	 = ifort 
+
+#  directories used
+#
+LAPACK95 = LAPACK95/
+
+# debug options
+#
+OPTDEB   = -g
+
+# release options
+#
+OPTREL    = -O3 -xT
+OPTREL0   = -O3 -xT
+
+# MODLIB   = -I$(LAPACK_PATH)/include -I$(NR_PATH)
+OPTLIB   =
+# OUTL     = -o # don't move the hash
+OUTL     = -o main.exe
+
+MKLPATH = /opt/intel/mkl/9.1.021/lib/em64t
+#LIBS   = -L$(MKLPATH) $(MKLPATH)/libmkl_em64t.a -lguide -lpthread
+LIBS    = -L$(MKLPATH) -lmkl_em64t -lguide -lpthread
+# MKL 10
+#MKLPATH = /opt/intel/mkl/10.0.1.014/lib/em64t
+#LIBS   = -L$(MKLPATH) -lmkl_em64t -lguide -lpthread
+
+# ACML
+#LIBS   = /opt/acml/4.1.0/ifort64/lib/libacml.a
+
+# to link with LAPACK95 add $(LAPACK95)
+# to link with arpack add $(ARPACK)
+
+OPT_DEB  = -c $(OPTDEB)
+
+OPT_REL  = -c $(OPTREL)
+OPT_REL0 = -c $(OPTREL0)
+
+SUF      = f90
+OBJ	 = o
+EXE	 =
+DEL	 = rm -f
+
+.SUFFIXES: .f90 .f95 .f .for .$(OBJ)

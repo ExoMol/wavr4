@@ -1,0 +1,46 @@
+to do:
+
+check that
+1. transformation is correct
+	e.g. do cross products
+2. check correctness of asym states
+
+
+write integration subroutine
+it can be used to test 1)
+
+
+Let |b>|c>|i(b,c)>  be a stage 2 eigenfunction where i is a running index from 1 to n(b,c).
+Assume we have P(HH) symmetry so our hamiltonian H = P(HH) H and
+b and c are indices over symmetrical radial grid bases, ie P(HH) |b> = |c>
+Thus there is a symmetry property P(HH) |b>|c>|i(b,c)> = |c>|b>|i'(c,b)> such that the
+set of all {i} and {i'} is the same. It is sufficient to compute only |i(b,c)> b=< c
+and find the b>c eigen-functions from symmetry properties.
+
+We use symmetrised basis such that
+  b<c :
+|bci sym> = (|b>|c>|i>+|c>|b>|i'>)/(sqrt(2))
+|bci asy> = (|b>|c>|i>-|c>|b>|i'>)/(sqrt(2))
+  b=c :
+|bci sym> =  |b>|c>|i>   if |i>= |i'>  ie |i> is symmetric
+|bci asy> =  |b>|c>|i>   if |i>=-|i'>  ie |i> is asymmetric
+
+
+Therefore when we get our eigenvectors in symmetrised basis
+
+sym
+psi = sum_{b,c,i; b=<c } C_{b,c,i} |bci sym> =
+
+    = sum_{b,c,i; b<c} C_{b,c,i}/(sqrt(2)) |b>|c>|i>
+    + sum_{b,c,i; b<c} C_{b,c,i}/(sqrt(2)) |c>|b>|i'(i)>
+    + sum_{b,c,i; b=c} C_{b,c,i}           |b>|c>|i>
+asy
+psi = sum_{b,c,i; b=<c } C_{b,c,i} |bci asy> =
+
+    = sum_{b,c,i; b<c} C_{b,c,i}/(sqrt(2)) |b>|c>|i>
+    - sum_{b,c,i; b<c} C_{b,c,i}/(sqrt(2)) |c>|b>|i>
+    + sum_{b,c,i; b=c} C_{b,c,i}           |b>|c>|i>
+
+
+
+where i'(i) is mapping from {i} to itself.

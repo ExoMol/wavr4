@@ -1,0 +1,6 @@
+! final state:  jp j_parity l_parity jl_parity  J  SMT(sym/asy/all)
+  0  0  0  0  1  all
+! initl state:  jp j_parity l_parity jl_parity  J  SMT(sym/asy/all)
+  0  0  0  0  0  all
+! dipole projection mu_?
+  z

@@ -1,0 +1,107 @@
+%\documentclass[preprint,aps,draft]{revtex4}
+\documentclass[aps,floatfix,unsortedaddress]{revtex4}
+\usepackage{verbatim} % added for the \begin{comment}
+\usepackage{graphicx}
+%\usepackage{dcolumn}
+%\usepackage{bm}
+\usepackage{longtable}
+\usepackage{rotating}
+\usepackage{graphics}
+\usepackage{lscape}
+\usepackage{amssymb}
+\usepackage{latexsym}
+\usepackage{multirow}
+
+% New commands
+\newcommand{\etal}{{\it et al.} }
+\newcommand{\ai}{{\it ab initio}}
+\newcommand{\vi}{{\it vide infra}}
+\newcommand{\cm}{cm$^{-1}$}
+\newcommand{\htwoo}{H$_2$O}
+\newcommand{\hato}{H$_2$$^{16}$O}
+\newcommand{\heto}{H$_2$$^{17}$O}
+\newcommand{\octo}{H$_2$$^{18}$O}
+\newcommand{\htwos}{H$_2$S}
+
+
+
+\def\dboc{{BODC}}
+\def\a0{{$a_{\rm 0}$}}
+\def\JCP{{\it J. Chem. Phys.}}
+\def\JPC{{\it J. Phys. Chem.}}
+\def\MP{{\it Mol. Phys.}}
+\def\CPL{{\it Chem. Phys. Lett.}}
+\def\JMSp{{\it J. Mol. Spectrosc.}}
+\renewcommand{\baselinestretch}{1.2}
+\begin{document}
+%\begin{frontmatter}
+
+
+\section{Appendix}
+
+\input{appendix}
+
+\newpage
+\section{Transformation to primitive basis}
+
+\input{transform}
+
+\newpage
+\section{Formulae used to code computation of 3J symbols}
+
+\input{threejformulae}
+
+
+\begin{thebibliography}{5}
+\expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
+\expandafter\ifx\csname bibnamefont\endcsname\relax
+  \def\bibnamefont#1{#1}\fi
+\expandafter\ifx\csname bibfnamefont\endcsname\relax
+  \def\bibfnamefont#1{#1}\fi
+\expandafter\ifx\csname citenamefont\endcsname\relax
+  \def\citenamefont#1{#1}\fi
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\providecommand{\bibinfo}[2]{#2}
+\providecommand{\eprint}[2][]{\url{#2}}
+
+\bibitem[{\citenamefont{{Bunker} and {Jensen}}(2006)}]{Bunker}
+\bibinfo{author}{\bibfnamefont{P.~R.} \bibnamefont{{Bunker}}} \bibnamefont{and}
+  \bibinfo{author}{\bibfnamefont{P.}~\bibnamefont{{Jensen}}},
+  \emph{\bibinfo{title}{{Molecular Symmetry and Spectroscopy}}}
+  (\bibinfo{publisher}{{NRC Research}}, \bibinfo{address}{Ottawa},
+  \bibinfo{year}{2006}), \bibinfo{edition}{2nd} ed.
+
+\bibitem[{\citenamefont{{Mladenovic}}(2000)}]{M.Mladenovic}
+\bibinfo{author}{\bibfnamefont{M.}~\bibnamefont{{Mladenovic}}} 
+  \bibinfo{journal}{J. Chem. Phys.} \textbf{\bibinfo{volume}{112}},
+  \bibinfo{pages}{1070} (\bibinfo{year}{2000}).
+
+\bibitem[{\citenamefont{{Zare}}(1988)}]{Zare}
+\bibinfo{author}{\bibfnamefont{R.}~\bibnamefont{{Zare}}},
+  \emph{\bibinfo{title}{{Angular Momentum}}}
+  (\bibinfo{publisher}{{Wiley-Interscience}}, \bibinfo{year}{1988}).
+
+\bibitem[{\citenamefont{{Kozin} et~al.}(2004)\citenamefont{{Kozin}, {Law},
+  {Tennyson}, and {Hutson}}}]{Tennyson}
+\bibinfo{author}{\bibfnamefont{I.~N.} \bibnamefont{{Kozin}}},
+  \bibinfo{author}{\bibfnamefont{M.~M.} \bibnamefont{{Law}}},
+  \bibinfo{author}{\bibfnamefont{J.}~\bibnamefont{{Tennyson}}},
+  \bibnamefont{and} \bibinfo{author}{\bibfnamefont{J.~M.}
+  \bibnamefont{{Hutson}}}, \bibinfo{journal}{Comput. Phys. Commun.}
+  \textbf{\bibinfo{volume}{163}}, \bibinfo{pages}{117} (\bibinfo{year}{2004}).
+
+\bibitem[{\citenamefont{{Kozin} et~al.}(2005)\citenamefont{{Kozin}, {Law},
+  {Tennyson}, and {Hutson}}}]{Kozin2}
+\bibinfo{author}{\bibfnamefont{I.~N.} \bibnamefont{{Kozin}}},
+  \bibinfo{author}{\bibfnamefont{M.~M.} \bibnamefont{{Law}}},
+  \bibinfo{author}{\bibfnamefont{J.}~\bibnamefont{{Tennyson}}},
+  \bibnamefont{and} \bibinfo{author}{\bibfnamefont{J.~M.}
+  \bibnamefont{{Hutson}}}, \bibinfo{journal}{J. Chem. Phys.}
+  \textbf{\bibinfo{volume}{122}}, \bibinfo{pages}{064309}
+  (\bibinfo{year}{2005}).
+
+\end{thebibliography}
+
+\end{document}

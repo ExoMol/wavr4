@@ -1,0 +1,1 @@
+ifort -o 0test.exe 0test.f90 grid3d.f90 types.f90 param.f90 base_lib.f90 laguer_dvr.f90 laguer_grid.f90 

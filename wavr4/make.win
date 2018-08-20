@@ -1,0 +1,156 @@
+#
+#  make.inc:  common part of FORTRAN77/95 make file for Win95
+#
+#  11/09/02 - CVF compiler
+#  18/05/01 - options added to bipass NR lib
+#  I. Kozin: 03.04.2001
+
+#  f90 free form
+FC	 = df.exe /free /c /nologo
+
+#  f90 fixed form
+FC1      = df.exe /fixed /c /nologo
+
+#  f77 (fixed) form
+FC2      = f77.exe /fixed /c /nologo
+
+#  linker
+LNK	 = link.exe
+
+#  directories used
+#
+COMMON = COMMON\ #
+LAPACK95 = LAPACK95\ #
+CORE   = 12-3\ #
+# CORE   = 3-12\ #
+# CORE   = 3-12.par\ #
+
+OUTL	 = /OUT:main.exe
+
+# LAPACK_PATH = d:\igor\fortran\digital\lib
+# it is redundant because the directory above is the LIB search path
+# could also use      /libpath:"d:\igor\fortran\digital\lib" 
+LAPACK_PATH = 
+LAPACK77 = $(LAPACK_PATH)lapack_win32.lib 
+
+# compiled blas
+# BLAS     = $(LAPACK_PATH)\blas_win32.lib
+# intel blas
+#BLAS     = $(LAPACK_PATH)intel.lib
+BLAS	= cxml.lib
+#
+# atlas blas and lapack for Athlon
+#
+#BLAS     = e:\usr\lib\atlas\atlas.lib 
+#LAPACK77 = e:\usr\lib\atlas\lapack.lib 
+
+LIBS     = kernel32.lib $(BLAS) $(LAPACK77)
+
+#  DF60 compile options
+#
+#  /fast means
+#/alignment:(dcommons, records, sequence) 
+#/architecture:host 
+#/assume:noaccuracy_sensitive 
+#/math_library:fast (which changes the default of /check:[no]power) 
+#/tune:host 
+#
+#  /fpe:3 (default on x86 systems)
+# Handling of underflow:
+# Leaves any calculated denormalized value as is. The program continues,
+# allowing gradual underflow. Use of a denormalized (or exceptional) number
+# in an arithmetic expression results in program continuation, but with
+# slower performance. A message is displayed only if /check:underflow is also
+# specified.
+# Handling of Divide by Zero, Overflow, and Invalid Data Operation:
+# The program continues. No message is displayed. A NaN or Infinity (+ or -) 
+# will be generated. 
+#
+# /unroll:count 
+#
+# If the /optimize:3, /optimize:4 (or equivalent), or /optimize:5 options 
+# are specified, loop unrolling occurs
+#
+# /inline:speed or /Ob2 
+# Inlines procedures that will improve run-time performance with a
+# significant increase in program size. This type of inlining is available
+# with /optimize:1 or higher.
+# If you omit /[no]inline or /Ob2, /inline:speed occurs automatically if you
+# specify /optimize:4, /optimize:5, /Ox, or /Oxp.
+#
+# Run-Time Options
+# Generate Traceback Information 	/[no]traceback  
+# Default Output Carriage Control  	/ccdefault:keyword  
+# Array and String Bounds 		/check:[no]bounds  
+# Integer Overflow 			/check:[no]overflow  
+# Floating-Point Underflow 		/check:[no]underflow  
+# Power Operations  			/check:[no]power  
+# Edit Descriptor Data Type  		/check:[no]format  
+# Flawed Pentium Chip  			/check:[no]flawed_pentium (x86 only)  
+# Edit Descriptor Data Size  		/check:[no]output_conversion  
+# the default is: 
+# /check:(nobounds,flawed_pentium,noformat,nopower,nooutput_conversion,nooverflow,nounderflow). 
+#
+# /warn, the defaults are: 
+# For the DF command: 
+#/warn:(alignments,noargument_checking,nodeclarations,noerrors,fileopts, 
+#general,granularity,nostderrors,notruncated_source,uncalled,uninitialized,
+#nounused,usage) 
+# For the FL32 command: nofileopts  instead of fileopts
+#
+# If you request traceback, you should also disable incremental linking.
+# For a Debug configuration in the visual development environment for a new
+# project, specifying Traceback turns off incremental linking. When using the
+# command line, specifying /traceback sets /link /incremental:no. You can
+# disable incremental linking either in the Link tab in the Project Settings
+# dialog box or specify DF /link /incremental:no on the command line.
+
+ 
+#
+# Debug options
+#
+#  /warn:declarations /warn:nofileopt /warn:argument_checking /warn:unused 
+#
+#  /check:underflow  for unknown reason the program treats underflow as
+#          an error while it should not
+#
+#  /fpe:0  Sets any calculated denormalized value (result) to zero and
+#          lets the program continue. A message is displayed only if 
+#          /check:underflow is also specified.
+#          Divide by Zero, Overflow, and Invalid Data Operation are not allowed
+
+OPT_DEB  = /debug:full /traceback /pdbfile:"main.pdb" /nologo /cxml \
+           /check:(overflow,bounds,noflawed_pentium) /fpe:0 \
+           /include:"./" /include:"d:\igor\fortran\digital\include"  \
+           /warn:all /warn:noerrors /object:"./" 
+
+#
+# Release options
+#
+
+OPT_REL  = /optimize:5 /fast /tune:p6 /arch:p6 /cxml /nologo  \
+           /warn:(declarations,nofileopt,unused)  \
+           /object:"./" /include:"./" \
+           /check:noflawed_pentium  \
+           /include:"d:\igor\fortran\digital\include"
+
+OPT_REL0  = /optimize:3 /tune:p6 /arch:p6 /cxml /nologo  \
+           /warn:(declarations,nofileopt,unused)  \
+           /object:"./" /include:"./" \
+           /check:noflawed_pentium  \
+           /include:"d:\igor\fortran\digital\include"
+
+# LIBN     = 
+
+OPTLIB   = $(LIBS) /nologo /subsystem:console /incremental:no  \
+           /stack:16000000
+# /debug /pdb:"main.pdb"
+# /profile   Creates an output file that can be used with the profiler.
+# /verbose
+
+SUF      = f90
+OBJ	 = obj
+EXE	 = .exe
+DEL	 = rm -f
+
+.SUFFIXES: .f90 .f .for .obj

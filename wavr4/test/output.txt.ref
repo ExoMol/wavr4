@@ -1,0 +1,596 @@
+ WAVR4 version 1.0: (1,2),3 h6swap
+
+ Four Atomic RoVibrational Program
+ INPUT: reading input...
+==============================< file:  input.txt >==============================
+ TITLE:  HCCH; coords: diat-diat (valence-like); potential: Carter et al (1982) 
+!  m1             m2             m3             m4                    <-- masses
+    1.007825032   12.000000000   12.000000000    1.007825032
+! Coordinate system:              <-- 1 Jacobi; 2 Radau; 3 DDiatom; 4 Orthog-Sat
+    3
+! type re/eta     we         De        gridsize      <-- radial basis/quadrature
+   1  1.1100    3200.000   43000.000     4
+   1  1.1100    3200.000   43000.000     4
+   1  1.3720    2100.000   45000.000     5
+! angular_problem_only_flag  optimize_flag  test_flag  expansion_flag           
+           0                       3             1             0
+!  jmax lmax kmax Jmax Kmax j_par l_par j+l_par           <-- angular basis size
+    12   12    4    1    1    0    0    0
+!    j    l    k                  <-- angular potential expansn size (if needed)
+     8    8    8
+!  nt1  nt  nphi iauto (1 - on)   <-- angular quadrature size (autoslct: on/off)
+     9    9    5    1
+! enzero                          <-- zero energy is used only when not computed
+         0.0000000000
+!   encut0  ! encut1    encut2    encut3     encut4      <-- Ecut#/icut#/margin#
+          0        50        80        40        10
+          0.    30000.    30000.    30000.    30000.
+          0.    30000.        0.        0.        0.
+          0         0         0         0         0
+!  r1(1)    r2(2)    R(3)    theta1(4) theta(5) phi(6)      <-- reference config
+   1.06100  1.06100  1.36700  3.14159  0.00000  0.00000
+!  stage_flag         <-- used to read in saved eigenvectors from previous stage
+          0
+!  oner_flag                      <-- 1/R^2 treatment: 0 - DVR approx, 1 - exact
+          0
+================================================================================
+ INPUT: processing input...
+
+ opt 3: Diatom-diatom vectors
+
+ adapted masses:
+    0.92974040    0.92974040    6.50391252
+
+ Basis Optimization is ENABLED
+
+  j-, l-, (j+l)-parity:
+  NO:  q1 -> -q1 symmetry (j-parity)
+  NO:  q2 -> -q2 symmetry (l-parity)
+  NO:  q3 -> -q3 symmetry (jl-parity)
+
+ angular basis size:               jmax= 12 lmax= 12 kmax=  4
+
+ angular potential expansion size: ne1 =  8 ne2 =  8 ne3 =  8
+
+ (auto) signle ang grid, iauto= 1:
+ nt1 = 13 nt  = 13 nphi=  3
+
+ full angular grid: nagrid = nt1*nt*nphi =   507
+
+ input zero energy   (enzero)=       0.0
+ stage #;      icut;  E cutoff  E margin
+ stage 0:         0       0.0       0.0         0
+ stage 1:        50   30000.0   30000.0         0
+ stage 2:        80   30000.0       0.0         0
+ stage 3:        40   30000.0       0.0         0
+ stage 4:        10   30000.0       0.0         0
+
+   Equilibrium/reference Valence configuration:
+   Re1=          1.06100000 AA
+   Re2=          1.06100000 AA
+   Re3=          1.36700000 AA
+   Th1=          3.14159300 rad
+   Th2=          0.00000000 rad
+   Phi=          0.00000000 rad
+
+   Equilibrium/reference energy:       -0.014511
+
+ INPUT: done.
+
+  angular_states_max: namax=        1663
+  angular_states_max: mmax =           5
+  angular_states_max: nexp =         285
+ stretch: processing r1...
+  DVR parameters:  re=  1.110000;  we=    3200.000;  De=   43000.000
+  Equilibr./Ref.: Qe1=  1.061000
+ beta=    1.81 alpha=   53.75
+ grid sum    should be         is               difference
+  r:  0.231000000000D+03  0.231000000000D+03  0.000000000000D+00
+  w:  0.138553142572D-03  0.138553142572D-03 -0.813151629364D-19
+  points  relative accuracy:   0.000000000000000E+000
+  weights relative accuracy:   5.868879003892642E-016
+ stretch: grid & weights done.
+ stretch: solving 1D...
+ stretch: eigenvalues:
+
+   #        E            r            v
+   1    1731.465      1.261325      4659.789
+   2    5094.426      1.135578       825.198
+   3    8032.038      1.026355       206.217
+   4    8940.365      0.916823      4652.206
+
+   we=    3362.961
+  trace=   23798.2947641505     
+  compare exact and DVR 1/R^2
+   1      0.000000     11.396753
+   2      0.000000     14.060513
+   3      0.000000     17.212323
+   4      0.000000     21.570697
+ stretch: done.
+
+ stretch: processing r2...
+  DVR parameters:  re=  1.110000;  we=    3200.000;  De=   43000.000
+  Equilibr./Ref.: Qe2=  1.061000
+ beta=    1.81 alpha=   53.75
+ grid sum    should be         is               difference
+  r:  0.231000000000D+03  0.231000000000D+03  0.000000000000D+00
+  w:  0.138553142572D-03  0.138553142572D-03 -0.813151629364D-19
+  points  relative accuracy:   0.000000000000000E+000
+  weights relative accuracy:   5.868879003892642E-016
+ stretch: grid & weights done.
+ stretch: solving 1D...
+ stretch: eigenvalues:
+
+   #        E            r            v
+   1    1731.465      1.261325      4659.789
+   2    5094.426      1.135578       825.198
+   3    8032.038      1.026355       206.217
+   4    8940.365      0.916823      4652.206
+
+   we=    3362.961
+  trace=   23798.2947641506     
+  compare exact and DVR 1/R^2
+   1      0.000000     11.396753
+   2      0.000000     14.060513
+   3      0.000000     17.212323
+   4      0.000000     21.570697
+ stretch: done.
+
+ stretch: processing r3...
+  DVR parameters:  re=  1.372000;  we=    2100.000;  De=   45000.000
+  Equilibr./Ref.: Qe3=  1.367000
+ beta=    3.07 alpha=   85.71
+ grid sum    should be         is               difference
+  r:  0.453571428571D+03  0.453571428571D+03  0.000000000000D+00
+  w:  0.198228045986D-05  0.198228045986D-05  0.000000000000D+00
+  points  relative accuracy:   0.000000000000000E+000
+  weights relative accuracy:   0.000000000000000E+000
+ stretch: grid & weights done.
+ stretch: solving 1D...
+ stretch: eigenvalues:
+
+   #        E            r            v
+   1    1014.650      1.462306      3911.323
+   2    3038.042      1.406345       634.769
+   3    5089.870      1.358387        30.238
+   4    6564.716      1.312691      1117.457
+   5    7516.717      1.264531      3884.583
+
+   we=    2023.392
+  trace=   23223.9948004354     
+  compare exact and DVR 1/R^2
+   1      0.000000      1.212118
+   2      0.000000      1.310504
+   3      0.000000      1.404672
+   4      0.000000      1.504170
+   5      0.000000      1.620925
+ stretch: done.
+
+ Last step:      0.03s; total:      0.03s.
+ computing theta grid...
+ done.
+ computing theta grid...
+ done.
+ computing phi grid...
+ done.
+ 
+ preparatory stage
+ Last step:      0.05s; total:      0.08s.
+
+
+   %%%%     jp= 0    %%%%
+
+
+  angular_states_qnumbers: na=        1663
+  number of basis functions for various K
+    K    # start  end
+    0  615    1  615
+    1 1048  616 1663
+
+   %%%%  K= 0  p= 0  %%%%
+
+ Last step:      0.00s; total:      0.08s.
+   angular K sub-block: na =         615
+  stage1 vectors will be computed
+  stage2 vectors will be computed
+  stage3 vectors will be computed
+ starting stage 1...
+
+ stage 1: made    3969 records
+ Last step:     92.96s; total:     93.04s.
+  direct product basis=     49200
+  optimized      basis=      3969
+  effective energy window for optimised basis was
+    from        1936.438 to       30000.000
+  max number of selected levels=        50
+  istage1=        3969
+ Last step:      0.22s; total:     93.27s.
+ end of stage 1
+
+ starting stage 2...
+
+  max number of records per i3, nf =         800
+ id  full basis  red. basis   start indx  end indx
+  1         775          80           1          80
+  2         794          80          81         160
+  3         800          80         161         240
+  4         800          80         241         320
+  5         800          80         321         400
+  effective energy window for optimised basis was
+    from        4880.770 to       30000.000
+  max number of selected levels=        80
+ stage 2: made     400 records
+ Last step:      8.28s; total:    101.55s.
+ end of stage 2
+
+ starting stage 3...
+
+   matrix size=  400
+  id=           1
+  id=           2
+  id=           3
+  id=           4
+  id=           5
+  allocating and reading in h6...
+  read       80200  out of       80200
+ Last step:     15.59s; total:    117.14s.
+  diagonalising h6...
+
+ zero energy=             5827.59151952
+
+
+ h6 energies (relative to zero energy):
+     1                0.000000
+     2             1347.190247
+     3             1457.040837
+     4             1559.452193
+     5             1943.875342
+     6             2839.766812
+     7             3029.779696
+     8             3031.635111
+     9             3182.875041
+    10             3265.034000
+    11             3290.102040
+    12             3358.410687
+    13             3385.380217
+    14             3421.511483
+    15             3443.810279
+    16             3454.911839
+    17             3842.970970
+    18             4569.811231
+    19             4576.116055
+    20             4704.996214
+    21             4723.828939
+    22             4727.015144
+    23             4779.395678
+    24             4816.923192
+    25             4845.538743
+    26             4851.165408
+    27             4897.264144
+    28             4919.732602
+    29             4928.491787
+    30             5007.528302
+    31             5107.201208
+    32             5114.688135
+    33             5137.052388
+    34             5196.197553
+    35             5215.175687
+    36             5219.106456
+    37             5236.477977
+    38             5252.214112
+    39             5277.085303
+    40             5320.076559
+ Last step:      0.21s; total:    117.35s.
+
+   %%%%  K= 1  p= 1  %%%%
+
+ Last step:      0.00s; total:    117.35s.
+   angular K sub-block: na =        1048
+  stage1 vectors will be computed
+  stage2 vectors will be computed
+  stage3 vectors will be computed
+  stage4 vectors will be computed
+ starting stage 1...
+
+ stage 1: made    3988 records
+ Last step:    345.36s; total:    462.71s.
+  direct product basis=     83840
+  optimized      basis=      3988
+  effective energy window for optimised basis was
+    from        2720.613 to       30000.000
+  max number of selected levels=        50
+  istage1=        3988
+ Last step:      0.34s; total:    463.05s.
+ end of stage 1
+
+ starting stage 2...
+
+  max number of records per i3, nf =         800
+ id  full basis  red. basis   start indx  end indx
+  1         788          80           1          80
+  2         800          80          81         160
+  3         800          80         161         240
+  4         800          80         241         320
+  5         800          80         321         400
+  effective energy window for optimised basis was
+    from        5542.605 to       30000.000
+  max number of selected levels=        80
+ stage 2: made     400 records
+ Last step:     11.21s; total:    474.26s.
+ end of stage 2
+
+ starting stage 3...
+
+   matrix size=  400
+  id=           1
+  id=           2
+  id=           3
+  id=           4
+  id=           5
+  allocating and reading in h6...
+  read       80200  out of       80200
+ Last step:     17.89s; total:    492.15s.
+  diagonalising h6...
+
+ h6 energies (relative to zero energy):
+     1              657.917649
+     2              763.959489
+     3             2069.538433
+     4             2165.445227
+     5             2211.787917
+     6             2272.736131
+     7             2361.082232
+     8             2425.957823
+     9             2589.403790
+    10             2684.268846
+    11             3668.774968
+    12             3759.106748
+    13             3875.434990
+    14             3903.094989
+    15             3918.332420
+    16             3973.172577
+    17             3976.708375
+    18             4020.672400
+    19             4034.187735
+    20             4055.867630
+    21             4058.674878
+    22             4096.282146
+    23             4137.300290
+    24             4137.956151
+    25             4151.859412
+    26             4196.804877
+    27             4229.655260
+    28             4269.180518
+    29             4270.782894
+    30             4291.783423
+    31             4476.866963
+    32             4545.649279
+    33             4648.354439
+    34             4655.335937
+    35             5269.319448
+    36             5393.355137
+    37             5430.396315
+    38             5448.370914
+    39             5493.255750
+    40             5520.498097
+ entering mainj: J=  1
+  h7 size=    80
+
+  ###  K=  1
+
+ reading stage 3...
+ done:  read in      40 eigenvectors
+
+ reading stage 1...
+ done:  read in    3988 eigenvectors
+
+ reading stage 2...
+ done:  read in     400 eigenvectors
+
+  ###  K=  0
+
+ reading stage 1A...
+ done:  read in    3969 eigenvectors
+
+ reading stage 2A...
+ done:  read in     400 eigenvectors
+
+  istage2 =         400  idx2 =         400
+  istage2A=         400  idx2A=         400
+ allocating and reading in h5...
+ done.
+ reading stage 3A...
+ done:  read in      40 eigenvectors
+
+  idx3 K    size =          40  start=           1  end=          40
+  idx3 K+1  size =          40  start=          41  end=          80
+ reading stage 3...
+ done:  read in      40 eigenvectors
+
+ reading stage 1...
+ done:  read in    3969 eigenvectors
+
+ reading stage 2...
+ done:  read in     400 eigenvectors
+
+
+ h7 done. diagonalizing... 
+
+ FINALLY: h7 energies (relative to zero energy):
+     1                2.381819
+     2              657.931246
+     3              763.782420
+     4             1349.640037
+     5             1459.525015
+     6             1561.927428
+     7             1946.271816
+     8             2069.595928
+     9             2165.512513
+    10             2211.787587
+ Last step:     33.01s; total:    525.16s.
+
+
+   %%%%     jp= 1    %%%%
+
+
+  angular_states_qnumbers: na=        1494
+  number of basis functions for various K
+    K    # start  end
+    0  446    1  446
+    1 1048  447 1494
+
+   %%%%  K= 0  p= 1  %%%%
+
+ Last step:      0.00s; total:    525.17s.
+   angular K sub-block: na =         446
+  stage1 vectors will be computed
+  stage2 vectors will be computed
+  stage3 vectors will be computed
+ starting stage 1...
+
+ stage 1: made    3828 records
+ Last step:     45.74s; total:    570.91s.
+  direct product basis=     35680
+  optimized      basis=      3828
+  effective energy window for optimised basis was
+    from        3554.793 to       30000.000
+  max number of selected levels=        50
+  istage1=        3828
+ Last step:      0.17s; total:    571.08s.
+ end of stage 1
+
+ starting stage 2...
+
+  max number of records per i3, nf =         789
+ id  full basis  red. basis   start indx  end indx
+  1         704          80           1          80
+  2         766          80          81         160
+  3         783          80         161         240
+  4         786          80         241         320
+  5         789          80         321         400
+  effective energy window for optimised basis was
+    from        6342.847 to       30000.000
+  max number of selected levels=        80
+ stage 2: made     400 records
+ Last step:      7.03s; total:    578.11s.
+ end of stage 2
+
+ starting stage 3...
+
+   matrix size=  400
+  id=           1
+  id=           2
+  id=           3
+  id=           4
+  id=           5
+  allocating and reading in h6...
+  read       80200  out of       80200
+ Last step:     14.62s; total:    592.73s.
+  diagonalising h6...
+
+ h6 energies (relative to zero energy):
+     1             1442.679545
+     2             2932.684887
+     3             3108.413820
+     4             3206.750096
+     5             3350.815634
+     6             4642.345210
+     7             4699.903824
+     8             4805.183993
+     9             4811.645925
+    10             4928.275510
+    11             4950.146943
+    12             4988.623240
+    13             5049.622570
+    14             5143.929821
+    15             5202.246646
+    16             5536.050207
+    17             5556.269479
+    18             6125.270460
+    19             6279.880686
+    20             6321.849158
+    21             6433.816714
+    22             6442.298295
+    23             6468.918835
+    24             6544.495092
+    25             6591.201601
+    26             6616.629781
+    27             6690.470541
+    28             6709.076818
+    29             6721.814092
+    30             6761.365410
+    31             6778.949830
+    32             6791.582152
+    33             6817.735090
+    34             6901.335169
+    35             7152.707258
+    36             7190.288259
+    37             7267.420890
+    38             7284.800868
+    39             7429.236020
+    40             7432.181203
+ Last step:      0.21s; total:    592.94s.
+
+   %%%%  K= 1  p= 0  %%%%
+
+ Last step:      0.00s; total:    592.94s.
+   angular K sub-block: na =        1048
+  stage1 vectors seem to exist
+  stage2 vectors seem to exist
+  stage3 vectors seem to exist
+  stage4 vectors will be computed
+ entering mainj: J=  1
+  h7 size=    80
+
+  ###  K=  1
+
+ reading stage 3...
+ done:  read in      40 eigenvectors
+
+ reading stage 1...
+ done:  read in    3988 eigenvectors
+
+ reading stage 2...
+ done:  read in     400 eigenvectors
+
+  ###  K=  0
+
+ reading stage 1A...
+ done:  read in    3828 eigenvectors
+
+ reading stage 2A...
+ done:  read in     400 eigenvectors
+
+  istage2 =         400  idx2 =         400
+  istage2A=         400  idx2A=         400
+ allocating and reading in h5...
+ done.
+ reading stage 3A...
+ done:  read in      40 eigenvectors
+
+  idx3 K    size =          40  start=           1  end=          40
+  idx3 K+1  size =          40  start=          41  end=          80
+ reading stage 3...
+ done:  read in      40 eigenvectors
+
+ reading stage 1...
+ done:  read in    3828 eigenvectors
+
+ reading stage 2...
+ done:  read in     400 eigenvectors
+
+
+ h7 done. diagonalizing... 
+
+ FINALLY: h7 energies (relative to zero energy):
+     1              657.917626
+     2              763.760674
+     3             1445.127880
+     4             2069.538022
+     5             2165.547458
+     6             2211.712846
+     7             2272.542266
+     8             2360.982165
+     9             2425.794852
+    10             2589.403767
+ Last step:     18.52s; total:    611.46s.

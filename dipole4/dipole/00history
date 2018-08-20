@@ -1,0 +1,147 @@
+06/07/2009
+
+found a big in integration over phi: required change to is3 if we are dealing with mu_y
+
+! the symmetry i.r.t. Pi/2 axis
+! mu_grid has always symmetrized values f(+)=f(x)+f(-x) for is1, is2, is3=0
+!               anti-symmetrized values f(-)=f(x)-f(-x) for is1, is2, is3=1
+! therefore there is no need for doubling the integral value after halving the
+! integration regions.
+! f(+) contains symmetric portion of mux, muy and muz 
+! f(-) contains anti-symmetric portion of mux, muy and muz
+!
+! symmetry of cos(n phi) & sin(n phi) in the respect to phi= Pi/2 axis:
+!        n= 1  2  3
+! cos(nx)   a  s  a ...
+! sin(nx)   s  a  s ...
+!
+! therefore when computing integrals [mu_z cos(n phi)] or [mu_x con(n phi)]
+! for even n we need only symmetric part of mu_z or mu_x       => is3 = 0
+! for odd  n we need only anti-symmetric part of mu_z or mu_x  => is3 = 1
+! it is opposite for integrals of [mu_y sin(n phi)]
+! for even n we need only anti-symmetric part of mu_y          => is3 = 1
+! for odd  n we need only symmetric part of mu_y               => is3 = 0
+! hence is3 needs to be modified for mu_y
+
+    is1=mod(j1+m1+j2+m2,2)
+    is2=mod(l1+k1+l2+k2,2)
+    is3=mod(abs(dksum),2)
+    if (dipole_projection == 'y') is3=mod(abs(dksum+1),2)
+
+
+
+
+18/05/2009
+
+main1-mpi.f90  - dipole transitions calculations for J>0.
+
+new or changed files:
+	main1-mpi.f90
+	threej.f90
+	grid3d.f90	grid_phi_sin
+
+	generate-test-data.f90   - generates fake wave-functions for testing the code
+	3j-test.f90	- code to test my3j function in threej.f90 
+	drc3jj.f	- used only for testing 3J symbols, called by 3j-test.f90
+
+
+the old code main0-mpi.f90 could not actually do the real calculations, only <|mu|>.
+
+
+Testing. It appears that the expressions for <i'|V|i> are almost identical with the ones for
+<i'|mu_z|i> - see eqs. 42, 43.
+Blue book, 19/10/01 :
+(note that if K=0, kappa=-1)
+K=0, <i'|V|i> = 
+	N_0k' N_0k \int V P(m',j') P(m,j) P(k',l') P(k,l) (-1)^(k'+k)/(2*Pi)
+	2 [cos(k'-k) phi + (-1)^(J+p) cos(k'+k) phi ]
+K>0, <i'|V|i> = 
+if kappa' = kappa
+	N_K'k' N_Kk \int V P(m',j') P(m,j) P(k',l') P(k,l) (-1)^(k'+k)/(2*Pi)
+	2 cos(k'-k) phi
+if kappa' = -kappa, J+K+p = even
+	N_K'k' N_Kk \int V P(m',j') P(m,j) P(k',l') P(k,l) (-1)^(k'+k)/(2*Pi)
+	2 cos(k'+k) phi
+if kappa' = -kappa, J+K+p = odd
+	N_K'k' N_Kk \int V P(m',j') P(m,j) P(k',l') P(k,l) (-1)^(k'+k)/(2*Pi)
+	- 2 cos(k'+k) phi
+
+K=0, <i'|mu_z|i> = 
+	N_0k' N_0k \int mu_z (3J) P(m',j') P(m,j) P(k',l') P(k,l) 1/(2*Pi)
+	(kappa')^k' (kappa)^k (-1)^(K'+(kappa'+1)/2*k'+(kappa+1)/2*k)
+	2 [cos(k'-k) phi + (-1)^(J'+p') cos(k'+k) phi ]
+K>0, <i'|mu_z|i> = 
+	N_K'k' N_Kk \int mu_z (3J) P(m',j') P(m,j) P(k',l') P(k,l) 1/(2*Pi)
+	(kappa')^k' (kappa)^k (-1)^(K'+(kappa'+1)/2*k'+(kappa+1)/2*k)
+	2 cos(k'-k) phi
+
+Thus we can check orthogonality by setting mu_z=1 and (3J)=1
+Also the integration scheme can be almost the same as used for potential integration.
+
+
+14/09/2008
+
+created MPI version of main0.f90 -- main0-mpi.f90
+Makefile has been changed to use main0-mpi.f90 by default (see variable MAIN ).
+The following files have been modified in order to suppress output from worker nodes
+       laguer_dvr.f90
+       angles.f90
+       grid3d.f90
+almost all output there (except errors) is controlled by test_flag which is set to 0
+for all nodes but the master in main0-mpi.f90.
+
+
+01/07/2008
+
+added code to do simple computation of integrals of dipole function
+the new code is 
+	main0.f90 
+and is based on main.f90 - original dipole transitions code
+
+Note that selection of the dipole function is manual. Go to line 640 in main0.f90
+in 
+SUBROUTINE dipolematrix(r1,r2,r3)
+
+<...>
+
+! generate symmetrized (sym & anti-sym grids for mux, muy, muz
+!
+! SELECT the right dipole projection
+
+call dipole_grid_x(r1,r2,r3)
+!call dipole_grid_y(r1,r2,r3)
+!call dipole_grid_z(r1,r2,r3)
+
+and uncomment the projection you want to use.
+
+
+Makefile has been changed to use main0.f90 by default.
+
+
+18/06/2008
+
+1. fixed grid sizes for tp1(nt1,:) and tp2(nt,:)
+
+2. loop order corrected
+
+   the loop over the radial grid has been moved outside of the loops over K1 and K2 
+
+   (currently there are effectively no loops since Kr1=Kr2=0 
+    this needs to be fixed if J > 0)
+
+
+3. while debugging i implemented w-f orthogonality test through exact integration of a function
+   (sort of potential) v=1. i decided to retain it just in case i need to debug again.
+
+   in order to use it, change
+
+if(.FALSE.) then
+
+to
+
+if(.TRUE.) then
+
+then instead of integrating the proper dipole functions the code will integrate mu_z 
+which needs to be set to 1.
+
+

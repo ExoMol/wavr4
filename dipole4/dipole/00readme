@@ -1,0 +1,167 @@
+18/05/2009
+
+for reference: structure of the date files
+
+x0000-K?-1.dat
+	istage1, ist1_max
+	idx1			- full array
+loop over grid
+  loop over states
+	e, vec(:)
+
+x0000-K?-2.dat
+	istage2, ist2_max
+	idx2			- full array
+loop over grid
+  loop over states
+	e, vec(:)
+
+x0000-K?-3.dat
+	nout, nlev
+  loop over states
+	e, vec(:)
+
+x0000-K?-4.dat
+	nout, nlev
+  loop over states
+	e, vec(:)
+
+
+x0000-K?-all.dat
+	nstates
+	e(:)
+loop over grid
+  loop over states
+	vec(:)
+
+
+x0000-J?-all.dat
+	nstates
+	e(:)
+loop over K
+ loop over grid
+  loop over states
+	vec(:)
+
+
+
+06/05/2009
+
+modifications for J > 0
+
+there is already a loop over K' (kr1)
+instead of adding another loop over K (kr2) we add a loop over delta K
+	dk = -1,1,1
+then kr2 = kr1+dk
+
+kr1; kr2=kr1+dk
+
+dk = -1
+	kr1 = 1,2,..kr1max
+	kr2 = 0,1,..kr2max
+	kr1_start = abs(dk)
+	kr1_end   = min(kr1max, kr2max-dk)
+
+dk =  0
+	kr1 = 0,1,..kr1max
+	kr2 = 0,1,..kr2max
+	kr1_start = abs(dk)
+	kr1_end   = min(kr1max, kr2max-dk)
+
+dk = +1
+	kr1 = 0,1,..kr1max
+	kr2 = 1,2,..kr2max
+	kr1_start = abs(dk)
+	kr1_end   = min(kr1max, kr2max-dk)
+
+
+Only one of dipole functions is used at a time. 
+They are dynamically selected through the input file.
+
+mux:  only dk=-1,1
+muy:  only dk=-1,1
+muz:  only dk=0 
+
+
+for each transition the code computes either
+X(J,J')_mux or X(J,J')_muy or X(J,J')_muz
+So that the total X(J,J') = X(J,J')_mux + X(J,J')_muy + X(J,J')_muz
+and S = (2J+1)(2J'+1) X^2
+
+
+14/09/2008
+
+MPI version of integrals calculation.
+Test time for HCCH diatom-diatom (radial 6x6x9, angular 26x26x07), primitive basis file 662 MB
+Harpertown 3.0 GHz
+reading w-f from local /tmp, parity 0-0, muz
+serial time: 32920 s MKL
+             32364 s ACML
+MPI GbE n=162  197-209 s ppn=8, MKL
+           81  387 s ppn=8
+           81  391 s ppn=4
+Perfect scaling, no core contention, GbE is sufficient for passing small 60x60 states matrix.
+
+
+20/06/2008
+
+3j-test  - a stand along code to test 3J formulae used verbatim in main.f90 (at the end of file)
+
+the rest - dipole code
+
+
+20/06/2008
+
+Integration over phi grid
+
+full phi interval: 0 - 2*Pi
+
+symmtery i.r.t. Pi-axis
+all cosines: symmetric
+all   sines: anti-sym
+  potential: symmetric
+        mux: symmetric?
+        muy: symmetric?
+        muz: symmetric?
+
+ASSUME all mu_i are symmetric 
+suppose the function we integrate is symmetric and denote it f
+(symmtery i.r.t. Pi-axis relates to Inversion symmetry)
+then the integrals of
+  cos f cos != 0
+  cos f sin  = 0
+  sin f sin != 0
+
+symmetry of cos(kx) and sin(kx) i.r.t Pi/2 -axis
+k odd  cos(kx)  anti-sym
+k even cos(kx)       sym
+k odd  sin(kx)       sym
+k even sin(kx)  anti-sym
+
+since f has no symmetry i.r.t Pi/2 -axis
+f = f_sym + f_asy  where f_sym is symmetric part and f_asy is anti-symmetric
+
+cos(kx)    f   cos(mx) 
+   odd    sym     odd
+   odd    asy    even
+  even    sym    even
+
+sin(kx)    f   sin(mx) 
+   odd    sym     odd
+   odd    asy    even
+  even    sym    even
+
+
+
+The dipole integral never has sin * cos (that would be zero);
+it is either an integral of mu * cos(kx) or mu * sin(kx) or 
+sum of mu_a * cos(k'x) + mu_b * sin(k"x)  (a,b= x or y)
+
+IF mu_i are symmetric i.r.t. Pi-axis then \int mu_b * sin(k"x) = 0
+
+NEED to check that
+
+Our basis functions are Cos and Sin. The reason the integrands always 
+have only cos(kx) is because cos(x+y)=cos(x) cos(y) - sin(x) sin(y)
+ie this is precisely the non-zero part of the integral.
+

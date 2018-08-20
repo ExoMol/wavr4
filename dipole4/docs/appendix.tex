@@ -1,0 +1,758 @@
+Following Bunker and Jensen \citep{Bunker} [eq. (14-6)], 
+let us assume that the component of the molecular dipole moment operator along the $A$-axis 
+is given by
+\begin{equation}
+\mu_A = \sum_j e_j R_j,
+\end{equation}
+where $e_j$ and $R_j$ are the charge and coordinates of the $j$th particle in the molecule,
+and $j$ runs over all nuclei and electrons; $A = X, Y,$ or $Z$ and 
+$(X, Y, Z)$ is a coordinate system space fixed at the 
+nuclear % molecular 
+centre of mass.
+Then the line strength for a neutral molecule is
+\begin{equation}
+S_{(f \leftarrow i)} = \sum_{\Phi' \Phi} \sum_{A=X, Y, Z}    %\sum_{A=\xi, \eta, \zeta} 
+\vert \langle \Phi' \vert \mu_A \vert \Phi \rangle \vert^2
+\end{equation}
+where the first sum runs over all (degenerate) eigenfunctions $\Phi'$ and $\Phi$ with energies 
+$E'$ and $E$ respectively.
+In practise, ro-vibrational eigenfunctions are obtained in molecule-fixed axis system
+and therefore we need to transform the dipole moment operators into the molecule-fixed
+coordinate system. This can be compactly given by Bunker and Jensen \citep{Bunker} [eq. (14-15)]
+\begin{equation}
+\mu^{(1,\sigma)}_s = \sum^1_{\sigma''=-1} \left[ D^{(1)}_{\sigma \sigma''}(\phi, \theta, \chi)\right]^*
+\mu^{(1, \sigma'')}_m
+\end{equation}
+where the space fixed components of the dipole moment are given by
+\begin{equation}
+\mu^{(1,\pm 1)}_s = \left[ \mp \mu_X - i \mu_Y \right]/\sqrt{2}
+\end{equation}
+\begin{equation}
+\mu^{(1,0)}_s = \mu_Z
+\end{equation}
+and similarly the molecule fixed components are 
+\begin{equation}
+\mu^{(1,\pm 1)}_m = \left[ \mp \mu_x - i \mu_y \right]/\sqrt{2}
+\end{equation}
+\begin{equation}
+\mu^{(1,0)}_m = \mu_z
+\end{equation}
+Then the line strength equation above becomes
+\begin{equation}
+S_{(f \leftarrow i)} = \sum_{\Phi' \Phi} \sum^{1}_{\sigma = -1}
+\vert \langle \Phi' \vert \mu^{(1,\sigma)}_s \vert \Phi \rangle \vert^2
+= \sum_{\Phi' \Phi} \sum^{1}_{\sigma = -1} 
+\left\vert 
+\sum^{1}_{\sigma'' = -1}  
+\langle \Phi' \vert D^{(1)*}_{\sigma \sigma''}
+\mu^{(1,\sigma'')}_m \vert \Phi \rangle \right\vert^2
+\end{equation}
+
+The basis functions used by \textsc{wavr4} \citep{Tennyson}
+are a direct product of radial and angular functions. 
+The angular functions are non-direct product and include symmetric top functions.
+Thus the eigenfunctions obtained in the process of Hamiltonian diagonalization
+are linear combinations of basis functions 
+\begin{equation}
+\vert \Phi \rangle = \sum_{i, i_1, i_2, i_3} a_{i, i_1, i_2, i_3} 
+\vert i \rangle \vert i_1 \rangle \vert i_2 \rangle \vert i_3 \rangle
+\end{equation}
+where $\vert i_1 \rangle$, $\vert i_2 \rangle$ and $\vert i_3 \rangle$ are radial basis functions
+(they are essentially radial grid points) and the angular function is given by
+\begin{equation}
+\vert i \rangle = N_{Kk} \kappa^k P^{\vert k-\kappa K \vert}_j
+\left[ Y^{\kappa k}_l \vert J, K, M\rangle + (-1)^{J+p+K+k} Y^{-\kappa k}_l \vert J, -K, M \rangle \right]
+\end{equation}
+In the last equation, $N_{Kk}$ is normalisation coefficient $1/\sqrt{2 (1+ \delta_{K0} \delta_{k0})}$,
+$\kappa$ is an auxiliary (quantum) number taking values $+1$ or $-1$,
+$p$ is parity quantum number taking values 0 or 1,
+$j$, $l$ and $k$ are angular momentum quantum numbers, and
+$\vert J, K, M\rangle$ is symmetric top wave functions.
+Note that $i$ is assumed to be an aggregate quantum number running over all possible combinations
+of $j$, $l$, $k$, $\kappa$, $K$, and $M$ ($p$ and $J$ are strict quantum numbers and therefore 
+are the same for the whole eigenfunction).
+Then the expectation value of a dipole operator is given by
+\begin{equation}
+\langle \Phi' \vert D^{(1)*}_{\sigma \sigma''}
+\mu^{(1,\sigma'')}_m \vert \Phi \rangle
+= \sum_{i, i'} \sum_{i_1, i_2, i_3} 
+a_{i', i_1', i_2', i_3'} \; a_{i, i_1, i_2, i_3} 
+\langle i' \vert D^{(1)*}_{\sigma \sigma''} \mu^{(1,\sigma'')}_m \vert i \rangle
+\end{equation}
+where we used an approximation that
+$\langle i_1' \vert \langle i_2' \vert \langle i_3' \vert
+\mu^{(1,\sigma'')}_m
+\vert i_1 \rangle \vert i_2 \rangle \vert i_3 \rangle = 
+\mu^{(1,\sigma'')}_m \delta_{i_1 i_1'} \delta_{i_2 i_2'} \delta_{i_3 i_3'}$.
+That is we used the diagonal approximation for the dipole moment function in the grid basis.
+It means the integration over the radial basis is reduced to taking the values of the dipole function
+at the grid points. 
+After substituting the expression for $\vert i \rangle$ we obtain
+\begin{eqnarray} \nonumber &&
+\langle \Phi' \vert D^{(1)*}_{\sigma \sigma''}
+\mu^{(1,\sigma'')}_m \vert \Phi \rangle
+= \sum_{i, i'} \sum_{i_1, i_2, i_3} 
+a_{i', i_1', i_2', i_3'} \; a_{i, i_1, i_2, i_3} 
+N_{K'k'} (\kappa')^{k'} N_{Kk} (\kappa)^{k} \int \int d\Omega \;
+P^{\vert k'- \kappa' K' \vert}_{j'}
+P^{\vert k - \kappa  K  \vert}_{j} 
+\\ \nonumber &&
+ \left[ 
+ Y^{* \kappa' k'}_{l'} \mu^{(1,\sigma'')}_m Y^{\kappa k}_{l} \langle J',K',M' \vert D^{(1)*}_{\sigma \sigma''} \vert J,K,M \rangle +
+\right.  
+\\ \nonumber &&
+ + (-1)^{J'+p'+K'+k'} \;
+ Y^{* - \kappa' k'}_{l'} \mu^{(1,\sigma'')}_m Y^{\kappa k}_{l} \langle J',-K',M' \vert D^{(1)*}_{\sigma \sigma''} \vert J,K,M \rangle +
+\\ \nonumber &&
+ + (-1)^{J+p+K+k} \;
+ Y^{* \kappa' k'}_{l'} \mu^{(1,\sigma'')}_m Y^{-\kappa k}_{l} \langle J',K',M' \vert D^{(1)*}_{\sigma \sigma''} \vert J,-K,M \rangle +
+\\           &&
+\left. + (-1)^{J'+p'+K'+k'+J+p+K+k} \;
+ Y^{* -\kappa' k'}_{l'} \mu^{(1,\sigma'')}_m Y^{-\kappa k}_{l} \langle J',-K',M' \vert D^{(1)*}_{\sigma \sigma''} \vert J,-K,M \rangle
+ \right]
+\end{eqnarray}
+where $\mu^{(1,\sigma'')}_m$ is assumed to depend only on the internal angular coordinates and 
+the radial coordinates take the values of the radial grid points.
+
+
+Taking into account eq. (14-23) \cite{Bunker}
+\begin{equation}
+\langle J',K',M' \vert D^{(1)*}_{\sigma \sigma''} \vert J,K,M \rangle =
+(-1)^{K'+M'} \sqrt{(2J+1)(2J'+1)} 
+\left( \begin{array}{ccc} 
+J &        1 & J' \\
+K & \sigma'' & -K'  \end{array} \right)
+\left( \begin{array}{ccc} 
+J &      1 & J' \\
+M & \sigma & -M'  \end{array} \right)
+\end{equation}
+the expression in square brackets above becomes
+\begin{eqnarray}  \nonumber &&
+[...] = (-1)^{M'} \sqrt{(2J+1)(2J'+1)} 
+\left( \begin{array}{ccc} 
+J &      1 & J' \\
+M & \sigma & -M'  \end{array} \right)
+\\ \nonumber &&
+ \left\{
+ Y^{* \kappa' k'}_{l'} \mu^{(1,\sigma'')}_m Y^{\kappa k}_{l} 
+\left( \begin{array}{ccc} 
+J &        1 & J' \\
+K & \sigma'' & -K'  \end{array} \right) (-1)^{K'} +
+\right.
+\\ \nonumber &&
+ + Y^{* - \kappa' k'}_{l'} \mu^{(1,\sigma'')}_m Y^{\kappa k}_{l} 
+\left( \begin{array}{ccc} 
+J &        1 & J' \\
+K & \sigma'' & K'  \end{array} \right) (-1)^{J'+p'+K'+k'} \; (-1)^{-K'} +
+\\ \nonumber &&
+ + Y^{* \kappa' k'}_{l'} \mu^{(1,\sigma'')}_m Y^{-\kappa k}_{l} 
+\left( \begin{array}{ccc} 
+ J &        1 & J' \\
+-K & \sigma'' & -K'  \end{array} \right) (-1)^{J+p+K+k} \; (-1)^{K'} +
+\\           &&
+\left. + Y^{* -\kappa' k'}_{l'} \mu^{(1,\sigma'')}_m Y^{-\kappa k}_{l} 
+\left( \begin{array}{ccc} 
+ J &        1 & J' \\
+-K & \sigma'' & K'  \end{array} \right) (-1)^{J'+p'+K'+k'+J+p+K+k} \; (-1)^{-K'} \right\}
+\end{eqnarray}
+Clearly if $a$ is an integer then $(-1)^{a} = (-1)^{-a}$. 
+Since $K$ in our case is an integer $(-1)^{K'} = (-1)^{-K'}$ and 
+therefore $(-1)^{K'}$ can be taken away as a common factor.
+
+
+Our spherical harmonics are defined as in eq. (31) of Mladenovi{\'c} \cite{M.Mladenovic}
+\begin{equation}
+Y^{m}_{l} =  (-1)^{ \frac{m+\vert m \vert}{2} } P^{m}_{l} \frac{e^{i m \chi} }{\sqrt{2 \pi} }
+\end{equation}
+where $P^{m}_{l} (\cos \theta)$ are normalised associated Legendre functions.
+They have a property that $P^{m}_{l} = P^{-m}_{l}$ and it can be shown that 
+\begin{equation}
+(Y^{m}_{l})^{*} = (-1)^{m} Y^{-m}_{l}
+\end{equation}
+Since $\kappa$ is equal to $-1$ or 1 and $k$ is not negative
+\begin{equation}
+Y^{\kappa k}_{l} = (-1)^{\frac{\kappa k + \vert \kappa k \vert}{2}} P^{k}_{l} \frac{e^{i \kappa k \chi} }{\sqrt{2 \pi} } = 
+(-1)^{\frac{\kappa+1}{2} k } P^{k}_{l} \frac{e^{i \kappa k \chi} }{\sqrt{2 \pi} }
+\end{equation}
+
+
+With all that in place, the expectation value of the dipole moment function is
+\begin{eqnarray}  \nonumber &&
+\langle \Phi' \vert \mu^{(1,\sigma)}_s \vert \Phi \rangle = 
+\sum_{i',i,i_1,i_2,i_3} a_{i',i_1,i_2,i_3} a_{i,i_1,i_2,i_3} N_{K'k'} (\kappa')^{k'} N_{Kk} (\kappa)^{k}
+\\ \nonumber &&
+\int \int d\Omega \; P^{\vert k' - \kappa' K' \vert}_{j'} P^{\vert k - \kappa K \vert}_{j}
+(-1)^{M'+K'} \sqrt{(2 J+1)(2 J'+1)} 
+\left( \begin{array}{ccc} 
+ J &      1 &  J' \\
+ M & \sigma & -M'  \end{array} \right)
+\\ \nonumber &&
+\sum^{1}_{\sigma'' = -1} \mu^{(1,\sigma'')}_m
+\left[ Y^{- \kappa' k'}_{l'}  Y^{\kappa k}_{l} 
+\left( \begin{array}{ccc} 
+ J &        1 &  J' \\
+ K & \sigma'' & -K'  \end{array} \right) (-1)^{\kappa' k'} \right. +
+\\ \nonumber &&
++ Y^{ \kappa' k'}_{l'}  Y^{\kappa k}_{l} 
+\left( \begin{array}{ccc} 
+ J &        1 &  J' \\
+ K & \sigma'' &  K'  \end{array} \right) (-1)^{\kappa' k' + J'+p'+K'+k'} +
+\\ \nonumber &&
++ Y^{- \kappa' k'}_{l'}  Y^{- \kappa k}_{l} 
+\left( \begin{array}{ccc} 
+ J &        1 &  J' \\
+-K & \sigma'' & -K'  \end{array} \right) (-1)^{\kappa' k' + J+p+K+k} +
+\\           &&
+\left. + Y^{ \kappa' k'}_{l'}  Y^{- \kappa k}_{l} 
+\left( \begin{array}{ccc} 
+ J &        1 &  J' \\
+-K & \sigma'' &  K'  \end{array} \right) (-1)^{\kappa' k' + J'+p'+K'+k' + J+p+K+k} \right]
+\end{eqnarray}
+Using the spherical harmonics definition above we obtain
+\begin{eqnarray} \nonumber &&
+\langle \Phi' \vert \mu^{(1,\sigma)}_s \vert \Phi \rangle = 
+\sum_{i',i,i_1,i_2,i_3} a_{i',i_1,i_2,i_3} a_{i,i_1,i_2,i_3} N_{K'k'} (\kappa')^{k'} N_{Kk} (\kappa)^{k}
+\\ \nonumber &&
+\int \int d\Omega \; P^{\vert k' - \kappa' K' \vert}_{j'} P^{\vert k - \kappa K \vert}_{j}
+(-1)^{M'+K'} \sqrt{(2 J+1)(2 J'+1)} 
+\left( \begin{array}{ccc} 
+ J &      1 &  J' \\
+ M & \sigma & -M'  \end{array} \right)
+\\ \nonumber &&
+\sum^{1}_{\sigma'' = -1} \mu^{(1,\sigma'')}_m \frac{1}{2 \pi}
+\left[ P^{k'}_{l'}  P^{k}_{l} \; e^{i(- \kappa' k'+ \kappa k) \chi  }
+\left( \begin{array}{ccc} 
+ J &        1 &  J' \\
+ K & \sigma'' & -K'  \end{array} \right) (-1)^{ \frac{- \kappa' +1}{2} k' + \kappa' k' + \frac{ \kappa +1}{2} k } \right. +
+\\ \nonumber &&
++ P^{k'}_{l'}  P^{k}_{l} \; e^{i( \kappa' k'+ \kappa k) \chi  }
+\left( \begin{array}{ccc} 
+ J &        1 &  J' \\
+ K & \sigma'' &  K'  \end{array} \right) (-1)^{\frac{\kappa' +1}{2} k' + \kappa' k' + \frac{ \kappa +1}{2} k + J'+p'+K'+k'} +
+\\ \nonumber &&
++ P^{k'}_{l'}  P^{k}_{l} \; e^{i(- \kappa' k' - \kappa k) \chi  }
+\left( \begin{array}{ccc} 
+ J &        1 &  J' \\
+-K & \sigma'' & -K'  \end{array} \right) (-1)^{\frac{- \kappa' +1}{2} k' + \kappa' k' + \frac{- \kappa +1}{2} k + J+p+K+k} +
+\\           &&
+\left. + P^{k'}_{l'}  P^{k}_{l} \; e^{i( \kappa' k' - \kappa k) \chi  }
+\left( \begin{array}{ccc} 
+ J &        1 &  J' \\
+-K & \sigma'' &  K'  \end{array} \right) (-1)^{\frac{ \kappa' +1}{2} k' + \kappa' k' + \frac{- \kappa +1}{2} k + J'+p'+K'+k' + J+p+K+k} \right]
+\end{eqnarray}
+Since $\kappa$ is an integer the following holds 
+\begin{equation}
+(-1)^{\frac{4 \kappa}{2} } = 1  \; => \; (-1)^{\frac{3 \kappa}{2} } = (-1)^{\frac{- \kappa}{2} }
+\end{equation}
+and in particular
+\begin{equation}
+(-1)^{\frac{4}{2} } = 1  \; => \; (-1)^{\frac{3}{2} } = (-1)^{\frac{-1}{2} }
+\end{equation}
+
+Removing the obvious common factors and simplifying the result we obtain
+\begin{eqnarray}  \nonumber &&
+\langle \Phi' \vert \mu^{(1,\sigma)}_s \vert \Phi \rangle = 
+(-1)^{M'} \sqrt{(2 J+1)(2 J'+1)} 
+\left( \begin{array}{ccc} 
+ J &      1 &  J' \\
+ M & \sigma & -M'  \end{array} \right)
+\\ \nonumber &&
+\sum_{i',i,i_1,i_2,i_3} a_{i',i_1,i_2,i_3} a_{i,i_1,i_2,i_3} N_{K'k'} (\kappa')^{k'} N_{Kk} (\kappa)^{k} (-1)^{K'}
+\\ \nonumber &&
+\int \int d\Omega \; P^{\vert k' - \kappa' K' \vert}_{j'} P^{\vert k - \kappa K \vert}_{j} 
+P^{k'}_{l'}  P^{k}_{l} \frac{1}{2 \pi}
+\sum^{1}_{\sigma'' = -1} \mu^{(1,\sigma'')}_m 
+\\ \nonumber &&
+\left[ 
+e^{i(- \kappa' k'+ \kappa k) \chi  }
+\left( \begin{array}{ccc} 
+ J &        1 &  J' \\
+ K & \sigma'' & -K'  \end{array} \right) (-1)^{ \frac{\kappa' +1}{2} k' + \frac{\kappa +1}{2} k } \right. +
+\\ \nonumber &&
++ e^{i( \kappa' k'+ \kappa k) \chi  }
+\left( \begin{array}{ccc} 
+ J &        1 &  J' \\
+ K & \sigma'' &  K'  \end{array} \right) (-1)^{\frac{\kappa' +1}{2} k' + \frac{\kappa +1}{2} k + J'+p'+K'} +
+\\ \nonumber &&
++ e^{i(- \kappa' k' - \kappa k) \chi  }
+\left( \begin{array}{ccc} 
+ J &        1 &  J' \\
+-K & \sigma'' & -K'  \end{array} \right) (-1)^{\frac{\kappa' +1}{2} k' - \frac{\kappa +1}{2} k + J+p+K} +
+\\           &&
+\left. + e^{i( \kappa' k' - \kappa k) \chi  }
+\left( \begin{array}{ccc} 
+ J &        1 &  J' \\
+-K & \sigma'' &  K'  \end{array} \right) (-1)^{\frac{\kappa' +1}{2} k' - \frac{\kappa +1}{2} k + J'+p'+K' + J+p+K} \right]
+\end{eqnarray}
+As we can see there is another common factor $(-1)^{\frac{\kappa' +1}{2} k' + \frac{ \kappa +1}{2} k}$ because
+$(-1)^{(\kappa +1) k} = 1$ and therefore $(-1)^{\frac{\kappa +1}{2} k} = (-1)^{-\frac{\kappa +1}{2} k}$.
+
+
+Next, we expand the sum over $\sigma''$ explicitly
+\begin{eqnarray}  \nonumber &&
+\langle \Phi' \vert \mu^{(1,\sigma)}_s \vert \Phi \rangle = 
+(-1)^{M'} \sqrt{(2 J+1)(2 J'+1)} 
+\left( \begin{array}{ccc} 
+ J &      1 &  J' \\
+ M & \sigma & -M'  \end{array} \right)
+\\ \nonumber &&
+\sum_{i',i,i_1,i_2,i_3} a_{i',i_1,i_2,i_3} a_{i,i_1,i_2,i_3} N_{K'k'} (\kappa')^{k'} N_{Kk} (\kappa)^{k} 
+(-1)^{K' + \frac{\kappa' +1}{2} k' + \frac{\kappa +1}{2} k } \frac{1}{2 \pi}
+\\ \nonumber &&
+\int \int d\Omega \; P^{\vert k' - \kappa' K' \vert}_{j'} P^{\vert k - \kappa K \vert}_{j} 
+P^{k'}_{l'}  P^{k}_{l}
+\\ \nonumber &&
+\left\{ e^{i(- \kappa' k'+ \kappa k) \chi  }
+\left[ 
+\mu^{(1,0)}_m 
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+ K &  0 & -K'  \end{array} \right) +
+\mu^{(1,-1)}_m 
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+ K & -1 & -K'  \end{array} \right) +
+\mu^{(1,1)}_m 
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+ K &  1 & -K'  \end{array} \right) \right] \right. +
+\\ \nonumber &&
++ e^{i( \kappa' k'+ \kappa k) \chi  } (-1)^{J'+p'+K'} 
+\left[ 
+\mu^{(1,0)}_m 
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+ K &  0 &  K'  \end{array} \right) +
+\mu^{(1,-1)}_m 
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+ K & -1 &  K'  \end{array} \right) +
+\mu^{(1,1)}_m 
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+ K &  1 &  K'  \end{array} \right) \right] +
+\\ \nonumber &&
++ e^{i(- \kappa' k' - \kappa k) \chi  } (-1)^{J+p+K}
+\left[ 
+\mu^{(1,0)}_m 
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+-K &  0 & -K'  \end{array} \right) +
+\mu^{(1,-1)}_m 
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+-K & -1 & -K'  \end{array} \right) +
+\mu^{(1,1)}_m 
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+-K &  1 & -K'  \end{array} \right) \right] +
+\\           &&
+\left. + e^{i( \kappa' k' - \kappa k) \chi  } (-1)^{J'+p'+K' + J+p+K}
+\left[ 
+\mu^{(1,0)}_m 
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+-K &  0 &  K'  \end{array} \right) +
+\mu^{(1,-1)}_m 
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+-K & -1 &  K'  \end{array} \right) +
+\mu^{(1,1)}_m 
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+-K &  1 &  K'  \end{array} \right) \right] \right\}
+\end{eqnarray}
+
+Now we can write the expectation value of the dipole moment function in a compact form
+\begin{equation}
+\langle \Phi' \vert \mu^{(1,\sigma)}_s \vert \Phi \rangle = 
+(-1)^{M'} \sqrt{(2 J+1)(2 J'+1)} 
+\left( \begin{array}{ccc} 
+ J &      1 &  J' \\
+ M & \sigma & -M'  \end{array} \right) \; X(J,J')
+\end{equation}
+where $X(J,J')$ does not depend on $M$, $M'$ and $\sigma$. Therefore the line strength is
+\begin{equation}
+S_{(f \leftarrow i)} = \sum_{M,M',\sigma} \vert \langle \Phi' \vert \mu^{(1,\sigma)}_s \vert \Phi \rangle \vert^2 = 
+(2 J+1)(2 J'+1) \; 
+\vert X^2(J,J') \vert^2 \; 
+\sum^{1}_{\sigma = -1} \sum_{M}
+\left( \begin{array}{ccc} 
+ J &      1 &  J' \\
+ M & \sigma & -(M+\sigma)  \end{array} \right)^2
+\end{equation}
+Since $J'$ can only be equal to $J$ or $J\pm 1$, let us consider three different cases: 
+\begin{itemize}
+\item[Case I:] $J' = J \leftarrow J$ i.e. $\Delta J = 0$. There are three sub-cases:\\
+$\sigma = 0$ hence $M = -J ... J$, \\
+$\sigma = +1$ hence $M = -J ... J-1$, \\
+$\sigma = -1$ hence $M = -J+1 ... J$ \\
+and in any case $\sum^{1}_{\sigma = -1} \sum_{M} (...)^2 = 1$. Therefore $S = (2J+1)^2 X^2(J,J)$.
+\item[Case II:] $J' = J+1 \leftarrow J$ i.e. $\Delta J = 1$. There are also three sub-cases:\\
+$\sigma = 0$ hence $M = -J ... J$, \\
+$\sigma = +1$ hence $M = -J ... J$, \\
+$\sigma = -1$ hence $M = -J ... J$ \\
+and again in any case $\sum^{1}_{\sigma = -1} \sum_{M} (...)^2 = 1$. Therefore $S = (2J+1)(2J+3) X^2(J,J')$.
+\item[Case III:] $J' = J-1 \leftarrow J$ i.e. $\Delta J = -1$. This case must be the same as Case II by symmetry (reversibility).
+\end{itemize}
+
+Using the following property of $3J$-symbols
+\begin{equation}
+\left( \begin{array}{ccc} 
+ j_1 & j_2 & j \\
+ m_1 & m_2 & m  \end{array} \right) = (-1)^{j_1+j_2+j}
+\left( \begin{array}{ccc} 
+ j_1 &  j_2 &  j \\
+-m_1 & -m_2 & -m  \end{array} \right) 
+\end{equation}
+we can simplify the line strength expression to obtain
+\begin{equation}
+S_{(f \leftarrow i)} = (2J+1)(2J'+1) \vert X(J,J') \vert^2, \;\;\; J' = J-1, J, J+1
+\end{equation}
+where 
+\begin{eqnarray} \nonumber &&
+X(J,J') = 
+\sum_{i',i,i_1,i_2,i_3} a_{i',i_1,i_2,i_3} a_{i,i_1,i_2,i_3} N_{K'k'} (\kappa')^{k'} N_{Kk} (\kappa)^{k} 
+(-1)^{K' + \frac{\kappa' +1}{2} k' + \frac{\kappa +1}{2} k } \frac{1}{2 \pi}
+\\ \nonumber &&
+\int \int d\Omega \; P^{\vert k' - \kappa' K' \vert}_{j'} P^{\vert k - \kappa K \vert}_{j} 
+P^{k'}_{l'}  P^{k}_{l}
+\\ \nonumber &&
+\left\{ \mu^{(1,0)}_m
+\left(  e^{ i( \kappa' k'+ \kappa k) \chi  } (-1)^{J'+p'+K'} + 
+        e^{-i( \kappa' k'+ \kappa k) \chi  } (-1)^{J +p +K +J + 1 +J'}  \right)
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+ K &  0 &  K'  \end{array} \right) \right. +
+\\ \nonumber &&
++ \mu^{(1,0)}_m 
+  \left(  e^{ i(-\kappa' k'+ \kappa k) \chi  } + 
+          e^{-i(-\kappa' k'+ \kappa k) \chi  } (-1)^{J'+p'+K'+ J +p +K +J + 1 +J'}  \right)
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+ K &  0 & -K'  \end{array} \right) +
+\\ \nonumber &&
++ \left(  \mu^{(1, 1)}_m  e^{ i( \kappa' k'- \kappa k) \chi  } (-1)^{J'+p'+K' + J +p +K} + 
+          \mu^{(1,-1)}_m  e^{-i( \kappa' k'+ \kappa k) \chi  } (-1)^{J+ 1 +J'}  \right)
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+-K &  1 &  K'  \end{array} \right) +
+\\ \nonumber &&
++ \left(  \mu^{(1, 1)}_m  e^{-i( \kappa' k'+ \kappa k) \chi  } (-1)^{J +p +K} + 
+          \mu^{(1,-1)}_m  e^{ i( \kappa' k'+ \kappa k) \chi  } (-1)^{J'+p'+K' + J+ 1 +J'}  \right)
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+-K &  1 & -K'  \end{array} \right) +
+\\ \nonumber &&
++ \left(  \mu^{(1, 1)}_m  e^{ i( \kappa' k'+ \kappa k) \chi  } (-1)^{J'+p'+K'} + 
+          \mu^{(1,-1)}_m  e^{ i(-\kappa' k'+ \kappa k) \chi  } (-1)^{J +p +K  + J+ 1 +J'}  \right)
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+ K &  1 &  K'  \end{array} \right) +
+\\           &&
+\left.
++ \left(  \mu^{(1, 1)}_m  e^{ i(-\kappa' k'+ \kappa k) \chi  } + 
+          \mu^{(1,-1)}_m  e^{ i(-\kappa' k'+ \kappa k) \chi  } (-1)^{J'+p'+K'+ J +p +K  + J+ 1 +J'}  \right)
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+ K &  1 & -K'  \end{array} \right) \right\}
+\end{eqnarray}
+Due to the properties of $3J$-symbols the terms in the sum above exist only under special conditions.
+%the first term in the sum is only non-zero if $K'=K=0$, 
+%the second if $K'=K$,
+%the third if $K'=K-1$ (hence $K=1,2,3...$), 
+%the fourth if $K'=-K+1$ (hence $K=0$ or 1), 
+%the fifth if $K'=-K-1$ (therefore this case can not exist), and
+%the sixth if $K'=K+1$ (hence $K=0,1,2...$).
+Furthermore, rigorous selection rules allow only transitions between states with different parity i.e.\
+$p' \ne p$ (e.g.\ see Bunker and Jensen \citep{Bunker} p.\ 417).
+This can be also verified explicitly using the expressions above and by taking into account 
+that the action of inversion symmetry does not change $\mu_x$ and $mu_z$ but changes the sign of $\mu_y$.
+Now let us consider the above terms in more details.
+
+Term I exists only if $K' = K = 0$
+\begin{eqnarray}  \nonumber
+&& \{...\} = (-1)^{J'+p'}
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+ 0 &  0 &  0   \end{array} \right)
+\mu_z \times \\
+&&
+\left[ \cos ( \kappa' k' + \kappa k) \chi + i \sin ( \kappa' k' + \kappa k) \chi + 
+\left( \cos ( \kappa' k' + \kappa k) \chi - i \sin ( \kappa' k' + \kappa k) \chi \right) (-1)^{p'+p+1} \right]
+\end{eqnarray}
+Since $p' \ne p$ then $(-1)^{p'+p+1}=1$ and
+\begin{equation}
+\{...\} = (-1)^{J'+p'}
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+ 0 &  0 &  0   \end{array} \right)
+\mu_z \; 2 \cos ( \kappa' k' + \kappa k) \chi
+\end{equation}
+
+
+Term II exsits only if $K' = K$
+\begin{eqnarray} \nonumber
+&& \{...\} = 
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+ K &  0 & -K  \end{array} \right)
+\mu_z \times \\
+&&
+\left[ \cos ( -\kappa' k' + \kappa k) \chi + i \sin ( -\kappa' k' + \kappa k) \chi + 
+\left( \cos ( -\kappa' k' + \kappa k) \chi - i \sin ( -\kappa' k' + \kappa k) \chi \right) (-1)^{p'+p+1} \right]
+\end{eqnarray}
+Since $p' \ne p$ then $(-1)^{p'+p+1}=1$ and
+\begin{equation}
+\{...\} =     
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+ K &  0 & -K   \end{array} \right)
+\mu_z \; 2 \cos (-\kappa' k' + \kappa k) \chi
+\end{equation}
+
+
+Term III exists only if $K' = K -1$ i.e. $(-1)^{K'+K} = 1$, and $K = 1, 2, 3...$ (while $K' = 0, 1, 2...$ respectively)
+\begin{eqnarray}  \nonumber
+&& \{...\} = 
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+-K &  1 & K-1  \end{array} \right)
+\frac{(-1)^{J'+J+1}}{\sqrt{2}} \\ \nonumber
+&&
+\left[ ( -\mu_x - i \mu_y) 
+\left( \cos ( \kappa' k' - \kappa k) \chi + i \sin ( \kappa' k' - \kappa k) \chi \right) (-1)^{p'+p} + \right. \\
+&& \left.
++ ( \mu_x - i \mu_y)
+\left( \cos ( \kappa' k' - \kappa k) \chi - i \sin ( \kappa' k' - \kappa k) \chi \right) \right] \\ \nonumber
+&& = 
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+-K &  1 & K-1  \end{array} \right)
+\frac{(-1)^{J'+J+1}}{\sqrt{2}} \\ \nonumber
+&& \left[ 
+-i \mu_y \cos ( \kappa' k' - \kappa k) \chi \left( (-1)^{p'+p} + 1 \right)
+-  \mu_x \cos ( \kappa' k' - \kappa k) \chi \left( (-1)^{p'+p} - 1 \right) - \right. \\
+&& \left.
+-i \mu_x \sin ( \kappa' k' - \kappa k) \chi \left( (-1)^{p'+p} + 1 \right)
++  \mu_y \sin ( \kappa' k' - \kappa k) \chi \left( (-1)^{p'+p} - 1 \right) \right]
+\end{eqnarray}
+Since $p' \ne p$ then $(-1)^{p'+p} = -1$ and
+\begin{equation}
+\{...\} = 
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+-K &  1 & K-1  \end{array} \right)
+\frac{(-1)^{J'+J}}{\sqrt{2}} 2  \left[
+\mu_y \sin ( \kappa' k' - \kappa k) \chi -  \mu_x \cos ( \kappa' k' - \kappa k) \chi \right]
+\end{equation}
+
+Term IV exists only if $K' = -K +1$ hence either $K = 0$ and $K'=1$ or $K = 1$ and $K'=0$
+\begin{eqnarray} \nonumber
+&& \{...\} = 
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+-K &  1 & K-1  \end{array} \right)
+\frac{(-1)^{J+p+K}}{\sqrt{2}} \\ \nonumber
+&& \left[ ( -\mu_x - i \mu_y) 
+\left( \cos ( \kappa' k' + \kappa k) \chi - i \sin ( \kappa' k' + \kappa k) \chi \right) + \right. \\
+&& \left.
++ ( \mu_x - i \mu_y)
+\left( \cos ( \kappa' k' + \kappa k) \chi + i \sin ( \kappa' k' + \kappa k) \chi \right) (-1)^{p'+p} (-1)^{K'+K+1}
+\right] \\ \nonumber
+&& = 
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+-K &  1 & K-1  \end{array} \right)
+\frac{(-1)^{J+p+K}}{\sqrt{2}} \\ \nonumber
+&& \left[ 
+-  \mu_x \cos ( \kappa' k' + \kappa k) \chi \left( 1- (-1)^{p'+p} \right)
+-i \mu_y \cos ( \kappa' k' + \kappa k) \chi \left( 1+ (-1)^{p'+p} \right) - \right. \\ 
+&& \left.
+-  \mu_y \sin ( \kappa' k' + \kappa k) \chi \left( 1- (-1)^{p'+p} \right)
++i \mu_x \sin ( \kappa' k' + \kappa k) \chi \left( 1+ (-1)^{p'+p} \right) \right]
+\end{eqnarray}
+Since $p' \ne p$ then $(-1)^{p'+p} = -1$ and
+\begin{equation}
+\{...\} = 
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+-K &  1 & K-1  \end{array} \right)
+\frac{(-1)^{J+p+K}}{\sqrt{2}} 2  \left[
+- \mu_x \cos ( \kappa' k' + \kappa k) \chi -  \mu_y \sin ( \kappa' k' + \kappa k) \chi \right]
+\end{equation}
+
+Term V is not zero only if $K' = -K-1$ and therefore cannot exist.
+
+Term VI exists only if $K' = K +1$  i.e. $K = 0, 1, 2...$ (while $K' = 1, 2, 3...$ respectively)
+\begin{eqnarray} \nonumber
+&& \{...\} = 
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+ K &  1 & -K-1  \end{array} \right)
+\frac{1}{\sqrt{2}} \\ \nonumber
+&& \left[ ( -\mu_x - i \mu_y) 
+\left( \cos ( -\kappa' k' + \kappa k) \chi + i \sin ( -\kappa' k' + \kappa k) \chi \right) + \right. \\ 
+&& \left.
++ ( \mu_x - i \mu_y)
+\left( \cos ( -\kappa' k' + \kappa k) \chi - i \sin ( -\kappa' k' + \kappa k) \chi \right) (-1)^{p'+p}
+\right] \\ \nonumber
+&&  = 
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+ K &  1 & -K-1  \end{array} \right)
+\frac{1}{\sqrt{2}} \\ \nonumber
+&& \left[ 
+-  \mu_x \cos ( -\kappa' k' + \kappa k) \chi \left( 1- (-1)^{p'+p} \right)
+-i \mu_y \cos ( -\kappa' k' + \kappa k) \chi \left( 1+ (-1)^{p'+p} \right) + \right. \\ 
+&& \left.
++  \mu_y \sin ( -\kappa' k' + \kappa k) \chi \left( 1- (-1)^{p'+p} \right)
+-i \mu_x \sin ( -\kappa' k' + \kappa k) \chi \left( 1+ (-1)^{p'+p} \right) \right]
+\end{eqnarray}
+Since $p' \ne p$ then $(-1)^{p'+p} = -1$ and
+\begin{equation}
+\{...\} = 
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+ K &  1 & -K-1  \end{array} \right)
+\frac{2}{\sqrt{2}} \left[
+- \mu_x \cos ( -\kappa' k' + \kappa k) \chi +  \mu_y \sin ( -\kappa' k' + \kappa k) \chi \right]
+\end{equation}
+The projections of dipole are real functions and therefore $X(J,J')$ is real too.
+
+Let us define $\Delta K = K - K'$, ie $K = K'+\Delta K$.
+The equations can be also summarized in a more compact form for different cases of $\Delta K$ and $K'$. \\
+$\Delta K = 0$, $K = K'= 0$ (Terms II and I)
+\begin{equation}
+\{...\} = 
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+ 0 &  0 &  0   \end{array} \right)
+\mu_z \; 2  \left[ 
+\cos ( \kappa' k' - \kappa k) \chi
+ + (-1)^{J'+p'} \cos ( \kappa' k' + \kappa k) \chi \right]
+\end{equation}
+$\Delta K = 0$, $K = K' > 0$ (Term II)
+\begin{equation}
+\{...\} = 
+\left( \begin{array}{ccc} 
+ J  &  1 &  J' \\
+ K' &  0 & -K'  \end{array} \right)
+\mu_z \; 2  \cos ( \kappa' k' - \kappa k) \chi
+\end{equation}
+$\Delta K = 1$, $K'= 0$, $K= 1$ (Terms III and IV)
+\begin{eqnarray} \nonumber
+&&\{...\} = 
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+-1 &  1 &  0   \end{array} \right)
+\sqrt{2} \;   \\ \nonumber
+&& \left[ \mu_x \left(
+(-1)^{J'+J+1} \cos ( \kappa' k' - \kappa k) \chi +
+(-1)^{J+p} \cos ( \kappa' k' + \kappa k) \chi \right) \right. \\
+&& \left. + \mu_y \left(
+(-1)^{J'+J} \sin ( \kappa' k' - \kappa k) \chi +
+(-1)^{J+p} \sin ( \kappa' k' + \kappa k) \chi \right)
+\right]
+\end{eqnarray}
+$\Delta K = 1$, $K'> 0$, $K=K'+1$ (Term III)
+\begin{equation}
+\{...\} = 
+\left( \begin{array}{ccc} 
+ J    &  1 &  J' \\
+-K'-1 &  1 &  K'  \end{array} \right)
+\sqrt{2} \; \left[ \mu_x  (-1)^{J'+J+1} \cos ( \kappa' k' - \kappa k) \chi 
++ \mu_y  (-1)^{J'+J} \sin ( \kappa' k' - \kappa k) \chi  \right]
+\end{equation}
+$\Delta K = -1$, $K'= 1$, $K= 0$ (Terms VI and IV)
+\begin{eqnarray} \nonumber
+&&\{...\} = 
+\left( \begin{array}{ccc} 
+ J &  1 &  J' \\
+ 0 &  1 & -1   \end{array} \right)
+\sqrt{2} \; \\ \nonumber
+&& \left[ \mu_x  \left(
+- \cos ( \kappa' k' - \kappa k) \chi +
+(-1)^{J+p+1} \cos ( \kappa' k' + \kappa k) \chi \right) \right. \\ 
+&& \left. + \mu_y  \left(
+- \sin ( \kappa' k' - \kappa k) \chi +
+(-1)^{J+p+1} \sin ( \kappa' k' + \kappa k) \chi \right)
+\right]
+\end{eqnarray}
+$\Delta K = -1$, $K'> 1$, $K=K'-1$ (Term VI)
+\begin{equation}
+\{...\} = 
+\left( \begin{array}{ccc} 
+ J    &  1 &  J' \\
+ K'-1 &  1 & -K'   \end{array} \right)
+\sqrt{2} \; \left[ - \mu_x  \cos ( \kappa' k' - \kappa k) \chi 
+- \mu_y  \sin ( \kappa' k' - \kappa k) \chi \right]
+\end{equation}
+
+The expressions above provided the basis for performing numerical line strength calculations
+and were used in the new \textsc{dipole4} code to compute line intensities.
+In practice, we calculate $X(J,J')$ as a sum of three terms each depending on either $\mu_x$, $\mu_y$ or $\mu_z$.
+The code supplements \textsc{wavr4} \citep{Tennyson} 
+and was written in Fortran~90 as \textsc{wavr4} itself.
+Although the formulae above are general, currently only the case of $J=0$ 
+was fully implemented.
+The code takes as an input a set of initial and final eigenfunctions, a dipole function,
+and a control file and computes line strengths between all possible combinations of 
+initial and final states.
+It follows from the equations above that there must be necessarily a sum (i.e a loop) over
+all angular and radial basis functions and an integration of the dipole function
+in order to obtain its matrix representation in the angular basis.
+We should note again that we assume diagonal representation of the dipole function
+in the radial basis.
+Since the basis functions (both FBR and DVR parts) are the same as those
+used in \textsc{wavr4}, we could readily use the integration functions from \textsc{wavr4} 
+for integration over the angular (FBR) basis and perform
+direct summation for the integration over the radial grids.
+For the purposes of the current project we only needed evaluation of matrix elements of 
+the dipole moment function and \textsc{dipole4} code has been modified accordingly.
+
+One note on the implementation is in order.
+If the integration-summation formulae are taken literally then
+they may result in matrix vector multiplication which is very
+inefficient on cache-based computer architectures for matrices larger than cache.
+Therefore we decided to operate simultaneously on several initial and final eigenfunctions
+and thus utilise matrix-matrix multiplication which is much more efficient.
+At the core, the new code is essentially a loop over the three-dimensional radial grid 
+which builds a matrix representation of the integrand in the primitive basis 
+and performs computations of integrals involving all possible initial and final states.  
+The intermediate results are accumulated in a matrix of the size equal to the number 
+of initial times final states.
+The loop over the radial grid lends itself to a very efficient parallelisation strategy.
+In the parallel implementation, the accumulators reside on every
+parallel processor so that no communication is necessary during the computation.
+Only a final reduction is required to gather the intermediate accumulators 
+and compute the transition matrix.
+
+
+Finally, one additional step is required for the calculation of dipole transitions.
+The wave-functions produced by \textsc{wavr4} need to be transformed
+back in to the primitive basis on which \textsc{dipole4} operates.
+This is done using a separate program and the results are stored on disk. 
+The two step approach allows more efficient calculation of the integrals, 
+reuse of converted wave functions as well as potential use of \textsc{dipole4} 
+with the codes which do not implement contraction-reduction strategy 
+(e.g. direct methods).
+
+\begin{verbatim}
+%  structure of the dipole matrix  p' /= p
+%
+%        K=0            K=1           K=2
+%        ____________  ____________  ____________
+%  K'=0 [ (II)  mu_z ][ (III) mu_x ][            ][
+%       [ (I)   mu_z ][ (IV)  mu_y ][            ][
+%       [____________][____________][____________][
+%  K'=1 [ (VI)  mu_x ][ (II)  mu_z ][ (III) mu_x ][
+%       [ (IV)  mu_y ][            ][       mu_y ][
+%       [____________][____________][____________][ \
+%  K'=2 [            ][ (VI)  mu_x ][ (II)  mu_z ][   \ dK = 1
+%       [            ][       mu_y ][            ][
+%       [____________][____________][____________][
+%                            \                 \ 
+%  dK = K - K',  K=K'+dK       \ dK = -1         \ dK = 0
+\end{verbatim}
+

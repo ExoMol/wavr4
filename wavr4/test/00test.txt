@@ -1,0 +1,39 @@
+Test acetylene calculation J=1
+
+Potential function for acetylene is based on
+Halonen, Child, Carter, Mol. Phys. 1982 v47 p1097
+which is an update for potetial1.f90 based on
+Carter, Mills, Murrell, Mol. Phys. 1980 v41 p191
+
+How to run the test:
+
+1. assume you have created ~/wavr4 directory.
+   copy the file potential.f90 to the root wavr4 directory
+   (i.e. ~/wavr4 ) and run make there
+2. cd test and run ../main.exe
+3. the program creates a number of data files x????-K?-?.dat
+   (these can be re-used), temporary h6.dat file and the
+   output file output.txt
+
+The calculation takes 100 MB RAM and 75 MB of disk space
+Time: about 10 min on both 667 MHz Alpha Tru64 and Sun Blade 2000
+
+31/07/03  I.K.
+
+
+Itanium2 1.6 GHz
+Intel compilers  with -O3 
+Version 8.1    Build 20041123 Package ID: l_fc_pc_8.1.023
+
+Total time: 351.91s
+
+28/02/05  INK
+
+
+Itanium2 1.6 GHz 6MB?
+Version 9.0    Build 20050912 Package ID: l_fc_c_9.0.027
+
+-O3 :           284.02s
+-O3 -ftz -ipo:  280.44s
+
+28/11/05

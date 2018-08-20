@@ -1,0 +1,5 @@
+#!/bin/bash
+#ifort -o generate-test-data.exe types.f90 param.f90 angles.f90 generate-test-data.f90
+ifort -o generate-test-data.J0K0.exe types.f90 param.f90 angles.f90 generate-test-data.J0K0.f90
+ifort -o generate-test-data.J1K0.exe types.f90 param.f90 angles.f90 generate-test-data.J1K0.f90
+ifort -o generate-test-data.J1K1.exe types.f90 param.f90 angles.f90 generate-test-data.J1K1.f90

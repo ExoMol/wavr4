@@ -1,0 +1,66 @@
+#
+#  make.inc:  common part of FORTRAN77/90/95 make file for DEC TRU64 UNIX
+#
+#  I. Kozin: 03/04/2001
+#  10/04/2002 - options added to choose release or debug options
+#               OPT_REL  or OPT_DEB
+
+#  f90 free form
+FC	 = f90
+#FC	 = f95
+
+#  f90 fixed form
+FC1      = f90 -fixed
+
+#  f77 (fixed) form
+FC2      = f77
+
+#  linker
+LNK	 = f90
+#LNK	 = f95
+
+#  directories used
+#
+COMMON = COMMON/
+LAPACK95 = LAPACK95/
+# CORE   = 12-3/
+CORE   = 3-12/
+# CORE   = 3-12.par/
+
+# LAPACK_PATH = /usr/local/LAPACK
+# LAPACK77 = $(LAPACK_PATH)/lapack.a
+
+# debug options
+#
+OPTDEB   = -g2 -check bounds -check nopower -check overflow -check underflow
+# -assume gfullpath
+
+# release options
+#
+# OPTREL    = -math_library fast  <- this is included in -fast
+# OPTREL    = -fast -O5 -spike -fpe1
+# tests with matmul showed that -fpe1 and -fast make it slower
+OPTREL    = -fast -O5
+OPTREL0   = -fpe1
+
+# MODLIB   = -I$(LAPACK_PATH)/include -I$(NR_PATH)
+OPTLIB   =
+# OUTL     = -o # don't move the hash
+OUTL     = -o main.exe
+
+LIBS 	 = -lcxml
+
+# to link with LAPACK95 add $(LAPACK95)
+# to link with arpack add $(ARPACK)
+
+OPT_DEB  = -c $(OPTDEB)
+
+OPT_REL  = -c $(OPTREL)
+OPT_REL0 = -c $(OPTREL0)
+
+SUF      = f90
+OBJ	 = o
+EXE	 =
+DEL	 = rm -f
+
+.SUFFIXES: .f90 .f95 .f .for .$(OBJ)

@@ -1,0 +1,94 @@
+01/05/2009
+
+The code tries to use existing K wave-functions which has already been transformed to the primitive basis.
+Currently the code operates only on one set of J wave-functions with particular symmetry
+which is controlled by inp.transf.txt file. The second row in the file defines symmetry and the fourth J.
+====< inp.transf.txt >==========
+  jp j_parity l_parity jl_parity
+  0  0  0  0
+  jr
+  2
+================================
+
+Note that
+0) the file naming convention is that
+ x????-K#-S.dat    S=1,2,3 are K=# wave-function files for ???? symmetry and stage S
+                   S=4     are J=# wave-functions
+ x????-K#-all.dat  are K=# wave-function files transformed to primitive basis
+ x????-J#-all.dat  are J=# wave-function files transformed to primitive basis
+
+1) for K>0 x1???-K?.dat is the same as x0???-K?.dat and therefore x1???-K?-all.dat files are not used either.
+
+2) x????-J0-all.dat files are not computed because they are identical to x????-K0-all.dat; use soft link
+   instead, e.g.
+   ln -s x0000-K0-all.dat x0000-J0-all.dat
+
+
+
+
+17/04/2009
+
+Truncation of primitive basis and symmetrization.
+
+NOTE: 
+	j,l,m are simple indices here (not quantum numbers);
+	na, n1, n2, n3 are the numbers of angular and radial states respectively;
+	Na(i1,i2,i3,K), N3(i3,K), N2(K) are the numbers of truncated states after stages 1, 2 and 3 respectively
+
+Non-symmetrized truncated basis
+===============================
+
+stage1 
+psi(j;K,i1,i2,i3)= Sum(i=1..na) c_(i;j)^(K,i1,i2,i3) |i>, j=1..Na
+
+stage2 
+psi(l;K,i3)   = Sum(i1=1..n1) Sum(i2=1..n2) Sum(j=1..Na) c_(i3,j;l)^(K,i1,i2) |i3> psi(j;K,i1,i2,i3), l=1..N3
+
+stage3 
+psi(m;K)         = Sum(i1=1..n1) Sum(i2=1..n2) Sum(l=1..N3) c_(i1,i2,l;m)^(K) |i1>|i2> psi(l;K,i1,i2), m=1..N2
+
+stage2 eigenfunctions expanded to primitive basis are
+psi(l;K,i1,i2)   = Sum(i3=1..n3) Sum(j=1..Na) c_(i3,j;l)^(K,i1,i2)  Sum(i=1..na) c_(i;j)^(K,i1,i2,i3) |i>|i3>
+
+stage3 eigenfunctions expanded to primitive basis are
+psi(m;K)         = Sum(i1=1..n1) Sum(i2=1..n2) Sum(l=1..N3) c_(i1,i2,l;m)^(K) |i1>|i2> 
+                   Sum(i3=1..n3) Sum(j=1..Na) c_(i3,j;l)^(K,i1,i2)  Sum(i=1..na) c_(i;j)^(K,i1,i2,i3) |i>|i3>
+= Sum(i1=1..n1) Sum(i2=1..n2) Sum(i3=1..n3) Sum(i=1..na) |i>|i1>|i2>|i3>
+  Sum(l=1..N3) c_(i1,i2,l;m)^(K) Sum(j=1..Na) c_(i3,j;l)^(K,i1,i2)   c_(i;j)^(K,i1,i2,i3) 
+
+
+
+===============================
+
+
+idx1(i1,i2,i3)%size - the number of selected angular functions at stage1
+idx1(i1,i2,i3)%start 
+idx1(i1,i2,i3)%end  - define bounds for a running index for all i1, i2, and given i3
+
+e.g.
+
+idx1(1,1,1)%start=1
+idx1(1,1,1)%size =5
+idx1(1,1,1)%end  =5
+
+idx1(2,1,1)%start=6
+idx1(2,1,1)%size =6
+idx1(2,1,1)%end  =11
+
+..
+
+idx1(2,2,1)%start=206
+idx1(2,2,1)%size =6
+idx1(2,2,1)%end  =211
+
+idx1(1,1,2)%start=1
+idx1(1,1,2)%size =4
+idx1(1,1,2)%end  =4
+
+...
+
+
+idx2(id)%size - the number of selected functions from stage1 
+                for all ib, ic, and given id
+idx2(id)%start
+idx2(id)%end  - define bounds for a running index for given id

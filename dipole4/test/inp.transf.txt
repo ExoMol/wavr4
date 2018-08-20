@@ -1,0 +1,4 @@
+  jp j_parity l_parity jl_parity
+  0  0  0  0
+  jr
+  1

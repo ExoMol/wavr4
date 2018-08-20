@@ -1,0 +1,60 @@
+
+notation: (running index); parameters
+
+
+WAVR4. Non-symmetrized truncated basis
+
+
+$n_a$ or na - number of angular states for given K.
+
+$N_a$ or Na - number of retained angular states for given K; $N_a \le n_a$.
+
+
+basis: $\Psi (i, i_1, i_2, i_3, K)$
+
+stage 1:
+\begin{equation}
+\Psi (j; i_1, i_2, i_3, K) = \sum_{i=1..n_a} c_{i}^{(j; i_1, i_2, i_3, K)} 
+\Psi (i, i_1, i_2, i_3, K), \;\;
+	j=1..N_a(i_1, i_2, i_3, K)
+\end{equation}
+
+stage 2:
+\begin{equation}
+\Psi (l; i_3, K) = \sum_{i_1=1..n_1} \sum_{i_2=1..n_2} \sum_{j=1..N_a} c_{j, i_1, i_2}^{(l; i_3, K)} 
+\Psi (j; i_1, i_2, i_3, K), \;\;
+	l=1..N_2(i_3, K)
+\end{equation}
+
+stage 3:
+\begin{equation}
+\Psi (m; K) = \sum_{i_3=1..n_3} \sum_{l=1..N_2} c_{l, i_3}^{(m; K)} 
+\Psi (l; i_3, K), \;\;
+	m=1..N_3(K)
+\end{equation}
+
+stage 4:
+\begin{equation}
+\Psi (n) = \sum_{K=0..J} \sum_{m=1..N_3} c_{m, K}
+\Psi (m; K) \;\;
+	n=1..N(J)
+\end{equation}
+
+
+\begin{equation}
+\Psi (n) = \sum_{K=0..J} \sum_{m=1..N_3} c_{m, K} 
+\sum_{i_3=1..n_3} \sum_{l=1..N_2} c_{l, i_3}^{(m; K)} 
+\sum_{i_1=1..n_1} \sum_{i_2=1..n_2} \sum_{j=1..N_a} c_{j, i_1, i_2}^{(l; i_3, K)} 
+\sum_{i=1..n_a} c_{i}^{(j; i_1, i_2, i_3, K)} 
+\Psi (i, i_1, i_2, i_3, K)
+\end{equation}
+
+\begin{equation}
+\Psi (n) = \sum_{i=1..n_a} \sum_{i_1=1..n_1} \sum_{i_2=1..n_2} \sum_{i_3=1..n_3} \sum_{K=0..J}
+\sum_{m=1..N_3} c_{m, K} 
+\sum_{l=1..N_2} c_{l, i_3}^{(m; K)} 
+\sum_{j=1..N_a} c_{j, i_1, i_2}^{(l; i_3, K)} 
+c_{i}^{(j; i_1, i_2, i_3, K)} 
+\Psi (i, i_1, i_2, i_3, K)
+\end{equation}
+

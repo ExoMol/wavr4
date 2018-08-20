@@ -1,0 +1,128 @@
+11/02/2007
+
+Truncation of primitive basis and symmetrization.
+
+NOTE: 
+	j,l,m are simple indices here (not quantum numbers);
+	na, n1, n2, n3 are the numbers of angular and radial states respectively;
+	Na(i1,i2,i3,K), N3(i1,i2,K), N(K) are the numbers of truncated states after stages 1, 2 and 3 respectively
+
+Non-symmetrized truncated basis
+===============================
+
+stage1 
+psi(j;K,i1,i2,i3)= Sum(i=1..na) c_(i;j)^(K,i1,i2,i3) |i>, j=1..Na
+
+stage2 
+psi(l;K,i1,i2)   = Sum(i3=1..n3) Sum(j=1..Na) c_(i3,j;l)^(K,i1,i2) |i3> psi(j;K,i1,i2,i3), l=1..N3
+
+stage3 
+psi(m;K)         = Sum(i1=1..n1) Sum(i2=1..n2) Sum(l=1..N3) c_(i1,i2,l;m)^(K) |i1>|i2> psi(l;K,i1,i2), m=1..N
+
+stage2 eigenfunctions expanded to primitive basis are
+psi(l;K,i1,i2)   = Sum(i3=1..n3) Sum(j=1..Na) c_(i3,j;l)^(K,i1,i2)  Sum(i=1..na) c_(i;j)^(K,i1,i2,i3) |i>|i3>
+
+stage3 eigenfunctions expanded to primitive basis are
+psi(m;K)         = Sum(i1=1..n1) Sum(i2=1..n2) Sum(l=1..N3) c_(i1,i2,l;m)^(K) |i1>|i2> 
+                   Sum(i3=1..n3) Sum(j=1..Na) c_(i3,j;l)^(K,i1,i2)  Sum(i=1..na) c_(i;j)^(K,i1,i2,i3) |i>|i3>
+= Sum(i1=1..n1) Sum(i2=1..n2) Sum(i3=1..n3) Sum(i=1..na) |i>|i1>|i2>|i3>
+  Sum(l=1..N3) c_(i1,i2,l;m)^(K) Sum(j=1..Na) c_(i3,j;l)^(K,i1,i2)   c_(i;j)^(K,i1,i2,i3) 
+
+
+Symmetrized truncated basis
+===========================
+
+Assume we have two symmetric coordinates r1 and r2 and P(12) or P(HH) symmetry so that our hamiltonian 
+
+	P(HH) Hamiltonian = Hamiltonian
+
+If i1 and i2 are indices over symmetrical coordinates (radial grid bases) then
+
+	P(HH) |i1> = |i2>.
+
+It can be shown that the angular basis is such that (the index "i" is an aggregate quantum number for j,l,k,kappa)
+
+	P(HH) |i> = F * |i'> 
+
+where i and i' belong to the angular basis set 1..na, i'=map(i) and
+
+	F = (-1)^(J+p) if J=0
+	F = (-1)^K if J>0.
+
+Since we know the action of P(HH) on the angular basis index P(HH) i -> i' we therefore can find
+the result of P(HH) on stage2 eigen functions psi(l;K,i1,i2):
+
+        P(HH) psi(l;K,i1,i2) =
+      = F * Sum(i3=1..n3) Sum(j=1..Na) c_(i3,j;l)^(K,i1,i2)  Sum(i=1..na) c_(i;j)^(K,i1,i2,i3) |i'>|i3>
+
+The sum is still over i but i' is a function of i: i->i' i.e. i'=map(i).
+
+Furthermore, since we are dealing with truncated states for each K separately the truncated
+stage 2 basis functions psi(l;K,i1,i2) retain this symmetry property
+
+	P(HH) psi(l;K,i1,i2) = F * psi'(l;K,i1,i2).
+
+and psi'(l;K,i1,i2) has the same energy as psi(l;K,i1,i2). Moreover
+
+	P(HH) |i1>|i2> psi(l;K,i1,i2) = |i2>|i1> psi'(l;K,i1,i2)
+
+and we can symmetrize the truncated basis according to P(HH) symmetry. Therefore it is sufficient to 
+compute only psi(l;K,i1,i2) : i1 <= i2 and find the i1 > i2 eigen-functions from symmetry properties.
+For each i1 /= i2 we can create one symmetric and one anti-symmetric basis function.
+If i1 == i1 then we can select N3_sym symmetric psi(l;K,i1,i2) truncated basis functions and N3_asy 
+basis functions so that N3_sym + N3_asy = N3.
+
+Let's define symmetric basis so that
+
+i1<i2 : |i1,i2, psi; sym> = (|i1>|i2> psi + F * |i2>|i1> psi')/(sqrt(2))
+i1=i2 : |i1,i2, psi; sym> =  |i1>|i2> psi   if psi is symmetric, ie psi= psi'
+
+and asymmetric basis
+
+i1<i2 : |i1,i2, psi; asy> = (|i1>|i2> psi - F * |i2>|i1> psi')/(sqrt(2))
+i1=i2 : |i1,i2, psi; asy> =  |i1>|i2> psi   if psi is asymmetric, ie psi=-psi'
+
+Therefore when we get our eigenvectors in symmetrised basis psi(l;K,i1,i2; sym/asy)
+the back transformation to primitive basis is (+ for P(HH) symmetric states, - for P(HH) asymmetric states)
+
+
+psi(m,K) = Sum(i1=1..n1, i2=1..n2, i1<=i2) Sum(l=1..N3) c_(i1,i2,l;m)^(K) |i1>|i2> psi(l;K,i1,i2; sym)
+
+         = Sum(i1=1..n1, i2=1..n2, i1<i2)  Sum(l=1..N3) c_(i1,i2,l;m)^(K) 1/(sqrt(2)) |i1>|i2> psi(l;K,i1,i2)
+       +/- Sum(i1=1..n1, i2=1..n2, i1<i2)  Sum(l=1..N3) c_(i1,i2,l;m)^(K) F/(sqrt(2)) |i2>|i1> psi'(l;K,i1,i2)
+         + Sum(i1=1..n1, i2=1..n2, i1=i2)  Sum(l=1..N3) c_(i1,i2,l;m)^(K) |i1>|i2> psi(l;K,i1,i2)
+
+ = Sum(i1=1..n1, i2=1..n2, i1<i2) Sum(i3=1..n3) Sum(i=1..na) |i1>|i2>|3>|i>
+   Sum(l=1..N3)       1/(sqrt(2)) c_(i1,i2,l;m)^(K) Sum(j=1..Na) c_(i3,j;l)^(K,i1,i2)  c_(i;j)^(K,i1,i2,i3) 
+
+ + Sum(i1=1..n1, i2=1..n2, i1<i2) Sum(i3=1..n3) Sum(i=1..na) |i2>|i1>|3>|map(i)>
+   Sum(l=1..N3) (+/- F)/(sqrt(2)) c_(i1,i2,l;m)^(K) Sum(j=1..Na) c_(i3,j;l)^(K,i1,i2)  c_(i;j)^(K,i1,i2,i3) 
+
+ + Sum(i1=1..n1, i2=1..n2, i1=i2) Sum(i3=1..n3) Sum(i=1..na) |i1>|i2>|3>|i>
+   Sum(l=1..N3)                   c_(i1,i2,l;m)^(K) Sum(j=1..Na) c_(i3,j;l)^(K,i1,i2)  c_(i;j)^(K,i1,i2,i3) 
+
+swap i1 and i2 indices in the second term
+
+ = Sum(i1=1..n1, i2=1..n2, i1<i2) Sum(i3=1..n3) Sum(i=1..na) |i1>|i2>|3>|i>
+   Sum(l=1..N3(i1,i2,K))       1/(sqrt(2)) c_(i1,i2,l;m)^(K) Sum(j=1..Na(i1,i2,i3,K)) c_(i3,j;l)^(K,i1,i2)  c_(i;j)^(K,i1,i2,i3) 
+
+ + Sum(i1=1..n1, i2=1..n2, i1>i2) Sum(i3=1..n3) Sum(i=1..na) |i1>|i2>|3>|map(i)>
+   Sum(l=1..N3(i2,i1,K)) (+/- F)/(sqrt(2)) c_(i2,i1,l;m)^(K) Sum(j=1..Na(i2,i1,i3,K)) c_(i3,j;l)^(K,i2,i1)  c_(i;j)^(K,i2,i1,i3) 
+
+ + Sum(i1=1..n1, i2=1..n2, i1=i2) Sum(i3=1..n3) Sum(i=1..na) |i1>|i2>|3>|i>
+   Sum(l=1..N3(i1,i2,K))                   c_(i1,i2,l;m)^(K) Sum(j=1..Na(i1,i2,i3,K)) c_(i3,j;l)^(K,i1,i2)  c_(i;j)^(K,i1,i2,i3) 
+
+IF i1 /= i2 THEN N3(i2,i1,K)=N3(i1,i2,K) and Na(i2,i1,i3,K)=Na(i1,i2,i3,K) because of symmetry;
+IF i1 == i2 THEN sym: l=1..N3_sym(i1,i2,K) selected from N3(i1,i2,K) such that s2sym(ib,kr,n1)= .TRUE.
+                 asy: l=1..N3_asy(i1,i2,K) selected from N3(i1,i2,K) such that s2sym(ib,kr,n1)= .FALSE.
+
+[we could go deeper to stage 1 and identify symmetric and anti-symmetric states there
+                      j=1..Na_sym(i1,i2,i3,K) selected from Na(i1,i2,i3,K) such that s1sym(i1,i3,kr,ia)= .TRUE.
+                      j=1..Na_asy(i1,i2,i3,K) selected from Na(i1,i2,i3,K) such that s1sym(i1,i3,kr,ia)= .FALSE.
+but in practice stage 1 truncated basis functions are not differentiated.]
+
+Therefore again as in non-symmetrised case for each i1,i2,i3 we can form matrices
+
+C3(m=1..nstates,l=1..N3(i1,i2,K)) x C2(l=1..N3(i1,i2,K),j=1..Na(i1,i2,i3,K)) x C1(j=1..Na(i1,i2,i3,K),i=1..na) =
+
+= C(m=1..nstates,i=1..na)

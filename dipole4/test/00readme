@@ -1,0 +1,21 @@
+16/06/2008  INK
+this is a sample test directory
+
+assuming HHSYM=TRUE
+
+the input files required are 
+input.txt        WAVR4 or WAVR4.SYM
+inp.txt          transform
+inp.dipole.txt   DIPOLE
+
+which produce these output files respectively
+
+out.dipole.txt
+output.txt
+out.txt
+
+Wave-function computation and transformation to primitive basis can be done by running 
+initiate.sh  
+followed by dipole moment calculation
+or altogether by
+run.sh
